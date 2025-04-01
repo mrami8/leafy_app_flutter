@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class BuscarPlantasPage extends StatefulWidget {
+  const BuscarPlantasPage({super.key});
+
   @override
   _BuscarPlantasPageState createState() => _BuscarPlantasPageState();
 }
 
 class _BuscarPlantasPageState extends State<BuscarPlantasPage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   List<dynamic> _resultados = [];
 
   Future<void> _buscarPlantas(String query) async {
