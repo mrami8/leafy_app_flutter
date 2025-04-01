@@ -25,8 +25,9 @@ class _BuscarPlantasPageState extends State<BuscarPlantasPage> {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
+      List<dynamic> plantas = json.decode(response.body);
       setState(() {
-        _resultados = json.decode(response.body);
+        _resultados = plantas;
       });
     } else {
       print("Error en la petición: ${response.statusCode}");
@@ -55,6 +56,7 @@ class _BuscarPlantasPageState extends State<BuscarPlantasPage> {
               itemCount: _resultados.length,
               itemBuilder: (context, index) {
                 return ListTile(
+                  leading: Image.network(_resultados[index]["imagen_url"]),
                   title: Text(_resultados[index]["nombre"]),
                   subtitle: Text(_resultados[index]["descripcion"]),
                 );
