@@ -1,55 +1,33 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-void main() {
-  runApp(PlantasApp());
-}
-
-class PlantasApp extends StatelessWidget {
+class BuscarPlantasPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BuscarPlantasScreen(),
-    );
-  }
+  _BuscarPlantasPageState createState() => _BuscarPlantasPageState();
 }
 
-class BuscarPlantasScreen extends StatefulWidget {
-  @override
-  _BuscarPlantasScreenState createState() => _BuscarPlantasScreenState();
-}
-
-class _BuscarPlantasScreenState extends State<BuscarPlantasScreen> {
-  TextEditingController _controller = TextEditingController();
+class _BuscarPlantasPageState extends State<BuscarPlantasPage> {
+  TextEditingController _searchController = TextEditingController();
   List<dynamic> _resultados = [];
-  bool _cargando = false;
 
-  Future<void> buscarPlantas(String query) async {
-    if (query.isEmpty) return;
-
-    setState(() {
-      _cargando = true;
-    });
-
-    final url = Uri.parse("https://tu-servidor.com/buscar_plantas.php?query=$query");
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _resultados = json.decode(response.body);
-          _cargando = false;
-        });
-      } else {
-        throw Exception("Error al buscar plantas");
-      }
-    } catch (e) {
-      print("Error: $e");
+  Future<void> _buscarPlantas(String query) async {
+    if (query.isEmpty) {
       setState(() {
-        _cargando = false;
+        _resultados = [];
       });
+      return;
+    }
+
+    final url = Uri.parse("https://localhost/leafy_api/buscar_plantas.php?query=$query");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _resultados = json.decode(response.body);
+      });
+    } else {
+      print("Error en la petición: ${response.statusCode}");
     }
   }
 
@@ -60,32 +38,27 @@ class _BuscarPlantasScreenState extends State<BuscarPlantasScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0),
             child: TextField(
-              controller: _controller,
+              controller: _searchController,
+              onChanged: _buscarPlantas,  // Llama a la función cada vez que cambia el texto
               decoration: InputDecoration(
-                labelText: "Buscar planta...",
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () => buscarPlantas(_controller.text),
-                ),
+                hintText: "Buscar planta...",
+                border: OutlineInputBorder(),
               ),
             ),
           ),
-          _cargando
-              ? CircularProgressIndicator()
-              : Expanded(
-                  child: ListView.builder(
-                    itemCount: _resultados.length,
-                    itemBuilder: (context, index) {
-                      final planta = _resultados[index];
-                      return ListTile(
-                        title: Text(planta["nombre"]),
-                        subtitle: Text("Detalles: ${planta["descripcion"] ?? 'Sin descripción'}"),
-                      );
-                    },
-                  ),
-                ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _resultados.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_resultados[index]["nombre"]),
+                  subtitle: Text(_resultados[index]["descripcion"]),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
