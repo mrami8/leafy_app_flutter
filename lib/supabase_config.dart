@@ -10,4 +10,10 @@ class SupabaseConfig {
       anonKey: supabaseAnonKey,
     );
   }
+
+  static Future<List<Map<String, dynamic>>> getUsuarios() async {
+    final client = Supabase.instance.client;
+    final response = await client.from('usuarios').select();
+    return response;
+  }
 }
