@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_config.dart';
 
-void main() {
-  runApp(const PlantasApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.init();
+  runApp(const MyApp());
 }
 
-class PlantasApp extends StatelessWidget {
-  const PlantasApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Plantas App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          primary: Colors.green,
-          secondary: Colors.lightGreen,
-        ),
-        useMaterial3: true,
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Supabase en Flutter')),
+        body: const Center(child: Text('Conexión exitosa!')),
       ),
-      home: const HomeScreen(),
     );
   }
 }
