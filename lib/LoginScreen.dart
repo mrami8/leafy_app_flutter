@@ -28,12 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
         // Aquí puedes navegar a la pantalla principal de la app
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al iniciar sesión')),
+          SnackBar(content: Text('Compruebe su correo electrónico y contraseña')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(content: Text('Compruebe su correo electrónico y contraseña. Error: ${e.toString()}')),
       );
     }
 
