@@ -11,9 +11,14 @@ class SupabaseConfig {
     );
   }
 
-  static Future<List<Map<String, dynamic>>> getUsuarios() async {
+  static Future<AuthResponse> login(String email, String password) async {
     final client = Supabase.instance.client;
-    final response = await client.from('usuarios').select();
+    final response = await client.auth.signInWithPassword(email: email, password: password);
     return response;
+  }
+
+  static Future<void> logout() async {
+    final client = Supabase.instance.client;
+    await client.auth.signOut();
   }
 }
