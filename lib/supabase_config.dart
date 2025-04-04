@@ -21,4 +21,21 @@ class SupabaseConfig {
     final client = Supabase.instance.client;
     await client.auth.signOut();
   }
+
+  static Future<AuthResponse> signUp(String email, String password, String nombre, String fotoPerfil) async {
+  final client = Supabase.instance.client;
+
+  final response = await client.auth.signUp(email: email, password: password);
+
+  if (response.user != null) {
+    await client.from('usuarios').insert({
+      'id': response.user!.id,
+      'nombre': nombre,
+      'email': email,
+      'foto_perfil': fotoPerfil,
+    });
+  }
+
+  return response;
+}
 }
