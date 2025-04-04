@@ -24,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('¡Inicio de sesión exitoso!')),
         );
-        // TODO: Navegar a Home
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al iniciar sesión')),
