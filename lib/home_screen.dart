@@ -13,10 +13,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    SearchScreen(),  // Pantalla principal con buscador
-    //ProfileScreen(), // Mi Perfil
-    //CalendarScreen(), // Calendario
-    //PlantsScreen(), // Plantas
+    SearchScreen(),
+    ProfileScreen(),
+    CalendarScreen(),
+    PlantsScreen(),
   ];
 
   void _onItemTapped(int index) {
