@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 import 'home_screen.dart';
+import 'providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,58 +14,46 @@ class _LoginScreenState extends State<LoginScreen> {
   final _nombreController = TextEditingController(); // Solo para registro
 
   bool isRegistering = false;
-  final SupabaseClient supabase = Supabase.instance.client;
 
-  Future<void> _login() async {
-    try {
-      final AuthResponse response = await supabase.auth.signInWithPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+  Future<void> _handleLogin(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    bool success = await authProvider.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen()),
       );
-
-      if (response.session != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al iniciar sesión')),
-        );
-      }
-    } on AuthException catch (e) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+        SnackBar(content: Text('Error al iniciar sesión')),
       );
     }
   }
 
-  Future<void> _register() async {
-    try {
-      final AuthResponse response = await supabase.auth.signUp(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+  Future<void> _handleRegister(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-      if (response.user != null) {
-        // Guardar usuario adicional en tabla "usuarios"
-        await supabase.from('usuarios').insert({
-          'id': response.user!.id,
-          'email': _emailController.text,
-          'nombre': _nombreController.text,
-        });
+    bool success = await authProvider.register(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+      _nombreController.text.trim(),
+    );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
-        );
-
-        setState(() {
-          isRegistering = false; // Volver al formulario de login
-        });
-      }
-    } on AuthException catch (e) {
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+        SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
+      );
+      setState(() {
+        isRegistering = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al registrarse')),
       );
     }
   }
@@ -94,7 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: isRegistering ? _register : _login,
+              onPressed: () {
+                if (isRegistering) {
+                  _handleRegister(context);
+                } else {
+                  _handleLogin(context);
+                }
+              },
               child: Text(isRegistering ? "Registrarse" : "Iniciar Sesión"),
             ),
             TextButton(
