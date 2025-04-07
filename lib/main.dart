@@ -4,6 +4,7 @@ import 'supabase_config.dart';
 import 'LoginScreen.dart';
 import 'home_screen.dart';
 import 'providers/auth_provider.dart';
+import 'calendar_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         home: Consumer<AuthProvider>(
