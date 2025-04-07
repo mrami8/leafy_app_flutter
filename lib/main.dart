@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'supabase_config.dart';
 import 'LoginScreen.dart';
-import 'home_screen.dart';
+import 'main_screen.dart';
 import 'providers/auth_provider.dart';
 
 void main() async {
@@ -17,7 +17,7 @@ void main() async {
       child: MaterialApp(
         home: Consumer<AuthProvider>(
           builder: (context, auth, _) {
-            return auth.session != null ? HomeScreen() : LoginScreen();
+            return auth.session != null ? MainScreen() : LoginScreen();
           },
         ),
       ),
