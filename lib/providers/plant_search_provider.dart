@@ -19,14 +19,18 @@ class PlantSearchProvider with ChangeNotifier {
     try {
       final response = await supabaseClient
           .from('plantas')
-          .select()
-          .ilike('nombre', '%$query%') // Filtramos por el nombre de la planta
-          .or('nombre_cientifico.ilike.%$query%'); // También filtramos por nombre científico
+          .select('id, nombre, nombre_cientifico, descripcion, imagen_principal, imagenes')
+          .ilike('nombre', '%$query%')
+          .or('nombre_cientifico.ilike.%$query%');
 
       // Comprobamos si la respuesta tiene datos
       if (response.isNotEmpty) {
         final List<dynamic> data = response;
-        plants = data.map((e) => Plant.fromMap(e)).toList();
+        plants = data.map((e) {
+          // Asumimos que el primer valor de 'imagenes' es la imagen principal
+          e['imagen_principal'] = e['imagenes'] != null && e['imagenes'].isNotEmpty ? e['imagenes'][0] : '';
+          return Plant.fromMap(e);
+        }).toList();
       } else {
         plants = [];
       }

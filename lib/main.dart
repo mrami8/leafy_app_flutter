@@ -7,22 +7,22 @@ import 'providers/auth_provider.dart';
 import 'providers/plant_search_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SupabaseConfig.init();
+  await SupabaseConfig.init(); // Inicializamos Supabase con la configuración
 
-  final supabaseClient = Supabase.instance.client;
+  final supabaseClient = Supabase.instance.client; // Obtenemos el cliente de Supabase
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()),
-        ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)),
+        ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()), // Proveedor para autenticación
+        ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)), // Proveedor para búsqueda de plantas
       ],
       child: MaterialApp(
         home: Consumer<AuthProvider>(
           builder: (context, auth, _) {
+            // Dependiendo de si hay sesión, mostramos la pantalla principal o la de login
             return auth.session != null ? MainScreen() : LoginScreen();
           },
         ),
