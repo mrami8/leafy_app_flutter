@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home_screen.dart';
+import 'main_screen.dart';
 import 'providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

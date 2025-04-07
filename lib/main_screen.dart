@@ -4,16 +4,16 @@ import 'package:leafy_app_flutter/screens/plants_screen.dart';
 import 'package:leafy_app_flutter/screens/profile_screen.dart';
 import 'package:leafy_app_flutter/screens/search_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0; // <- Esto hace que arranque en SearchScreen
 
   final List<Widget> _screens = [
-    SearchScreen(),
+    SearchScreen(), // ✅ Esta es la pantalla principal (como TikTok)
     ProfileScreen(),
     CalendarScreen(),
     PlantsScreen(),
@@ -32,9 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.green,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Mi Perfil"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Buscar"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Calendario"),
           BottomNavigationBarItem(icon: Icon(Icons.local_florist), label: "Plantas"),
         ],
