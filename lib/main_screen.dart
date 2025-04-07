@@ -5,6 +5,8 @@ import 'package:leafy_app_flutter/screens/profile_screen.dart';
 import 'package:leafy_app_flutter/screens/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -15,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     SearchScreen(),
     ProfileScreen(),
-    CalendarScreen(),
+    CalendarPage(),
     PlantsScreen(),
   ];
 

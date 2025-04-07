@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
 
 class SearchScreen extends StatelessWidget {
+  const SearchScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

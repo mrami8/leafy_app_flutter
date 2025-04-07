@@ -7,6 +7,7 @@ import 'providers/auth_provider.dart';
 import 'providers/plant_search_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SupabaseConfig.init();
