@@ -80,7 +80,7 @@ class AuthProvider extends ChangeNotifier {
         .from('usuarios')
         .select()
         .eq('id', _user!.id)
-        .single();
+        .maybeSingle();
 
     _userProfile = result;
   }
