@@ -31,7 +31,7 @@ class NotificationProvider extends ChangeNotifier {
 
 /// Pantalla principal del calendario
 class CalendarPage extends StatelessWidget {
-  const CalendarPage({Key? key}) : super(key: key);
+  const CalendarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class CalendarPage extends StatelessWidget {
 
 /// Lista de notificaciones para la fecha seleccionada
 class NotificationList extends StatelessWidget {
-  const NotificationList({Key? key}) : super(key: key);
+  const NotificationList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,7 @@ class NotificationList extends StatelessWidget {
 
 /// Formulario para añadir una notificación
 class AddNotificationForm extends StatefulWidget {
-  const AddNotificationForm({Key? key}) : super(key: key);
+  const AddNotificationForm({super.key});
 
   @override
   State<AddNotificationForm> createState() => _AddNotificationFormState();
