@@ -13,7 +13,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0; // <- Esto hace que arranque en SearchScreen
 
   final List<Widget> _screens = [
-    SearchScreen(), // ✅ Esta es la pantalla principal (como TikTok)
+    SearchScreen(),
     ProfileScreen(),
     CalendarScreen(),
     PlantsScreen(),
