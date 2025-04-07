@@ -39,7 +39,14 @@ class SearchScreen extends StatelessWidget {
                       elevation: 4.0,
                       child: Column(
                         children: [
-                          Image.network(plant.imagenPrincipal, fit: BoxFit.cover),
+                          Container(
+                            width: double.infinity, // Esto asegura que la imagen ocupe todo el ancho disponible
+                            height: 300.0, // Aquí puedes ajustar la altura según lo que necesites
+                            child: Image.network(
+                              plant.imagenUrl,
+                              fit: BoxFit.cover, // Asegura que la imagen se recorte correctamente para no distorsionarse
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(

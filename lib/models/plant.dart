@@ -3,24 +3,23 @@ class Plant {
   final String nombre;
   final String nombreCientifico;
   final String descripcion;
-  final String imagenPrincipal; // Puede ser la primera imagen de `imagenes` o la imagen principal de la base de datos.
+  final String imagenUrl; // Aquí almacenamos la URL de la imagen
 
   Plant({
     required this.id,
     required this.nombre,
     required this.nombreCientifico,
     required this.descripcion,
-    required this.imagenPrincipal,
+    required this.imagenUrl, // Nueva propiedad
   });
 
-  // Convierte un mapa a un objeto Plant
-  factory Plant.fromMap(Map<String, dynamic> map) {
+  factory Plant.fromMap(Map<String, dynamic> map, String imageUrl) {
     return Plant(
       id: map['id'],
       nombre: map['nombre'],
       nombreCientifico: map['nombre_cientifico'],
       descripcion: map['descripcion'],
-      imagenPrincipal: map['imagen_principal'] ?? map['imagenes'][0], // Toma la primera imagen si no hay imagen principal
+      imagenUrl: imageUrl, // Usamos la imagen proporcionada
     );
   }
 }
