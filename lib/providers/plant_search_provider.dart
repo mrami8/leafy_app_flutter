@@ -17,9 +17,12 @@ class PlantSearchProvider with ChangeNotifier {
   }
   try {
     final response = await supabaseClient
-        .from('plantas')
-        .select('id, nombre, nombre_cientifico, imagen_principal')
-        .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
+    .from('plantas')
+    .select('*')
+    .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
+    
+    print('Respuesta de la consulta: $response');
+
 
     if (response != null && response is List<dynamic>) {
       plants = response.map((e) => Plant.fromSearchMap(e)).toList();
