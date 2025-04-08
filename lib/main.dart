@@ -5,6 +5,7 @@ import 'LoginScreen.dart';
 import 'main_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/plant_search_provider.dart';
+import 'providers/notification_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -18,6 +19,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()), // Proveedor para autenticación
         ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)), // Proveedor para búsqueda de plantas
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         home: Consumer<AuthProvider>(
