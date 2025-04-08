@@ -41,7 +41,7 @@ class SearchScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => PlantDetailScreen(plant: plant),
+                            builder: (context) => PlantDetailScreen(plant: plant),
                           ),
                         );
                       },
@@ -49,13 +49,11 @@ class SearchScreen extends StatelessWidget {
                         elevation: 4.0,
                         child: Column(
                           children: [
-                            Container(
+                            Image.network(
+                              plant.imagenPrincipal,
+                              fit: BoxFit.cover,
+                              height: 100,
                               width: double.infinity,
-                              height: 300.0,
-                              child: Image.network(
-                                plant.imagenUrl,
-                                fit: BoxFit.cover,
-                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -84,3 +82,4 @@ class SearchScreen extends StatelessWidget {
     );
   }
 }
+

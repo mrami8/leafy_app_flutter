@@ -4,69 +4,67 @@ import 'package:leafy_app_flutter/models/plant.dart';
 class PlantDetailScreen extends StatelessWidget {
   final Plant plant;
 
-  const PlantDetailScreen({required this.plant});
+  PlantDetailScreen({required this.plant});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(plant.nombre)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (plant.imagenPrincipal.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  plant.imagenPrincipal,
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(plant.imagenPrincipal, fit: BoxFit.cover),
+              SizedBox(height: 10),
+              Text(
+                plant.nombre,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-            const SizedBox(height: 16),
-            Text(
-              plant.nombre,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              plant.nombreCientifico,
-              style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              plant.descripcion,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            if (plant.imagenes.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Otras imágenes:",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: plant.imagenes.map((url) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          url,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+              SizedBox(height: 5),
+              Text(
+                plant.nombreCientifico,
+                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
               ),
-          ],
+              SizedBox(height: 10),
+              Text(
+                'Descripción:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.descripcion),
+              SizedBox(height: 10),
+              Text(
+                'Cuidados:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.cuidados),
+              SizedBox(height: 10),
+              Text(
+                'Riego:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.riego),
+              SizedBox(height: 10),
+              Text(
+                'Luz:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.luz),
+              SizedBox(height: 10),
+              Text(
+                'Temperatura:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.temperatura),
+              SizedBox(height: 10),
+              Text(
+                'Sustrato:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(plant.sustrato),
+            ],
+          ),
         ),
       ),
     );

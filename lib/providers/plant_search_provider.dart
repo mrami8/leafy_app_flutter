@@ -9,35 +9,28 @@ class PlantSearchProvider with ChangeNotifier {
 
   PlantSearchProvider(this.supabaseClient);
 
-  Future<void> searchPlants(String query) async {
-    if (query.isEmpty) {
-      plants = [];
-      notifyListeners();
-      return;
-    }
-
-    try {
-      final response = await supabaseClient
-          .from('plantas')
-          .select()
-          .ilike('nombre', '%$query%') // Filtramos por el nombre de la planta
-          .or('nombre_cientifico.ilike.%$query%'); // También filtramos por nombre científico
-
-      if (response != null && response is List<dynamic>) {
-        plants = response.map((e) {
-          // Extraemos la imagen principal
-          final imageUrl = e['imagen_principal'] ?? ''; // Usamos imagen_principal
-          return Plant.fromMap(e, ); // Asumimos que el modelo 'Plant' puede aceptar la imagen
-        }).toList();
-      } else {
-        plants = [];
-      }
-
-      notifyListeners();
-    } catch (e) {
-      print('Error al buscar plantas: $e');
-      plants = [];
-      notifyListeners();
-    }
+ Future<void> searchPlants(String query) async {
+  if (query.isEmpty) {
+    plants = [];
+    notifyListeners();
+    return;
   }
+  try {
+    final response = await supabaseClient
+        .from('plantas')
+        .select('id, nombre, nombre_cientifico, imagen_principal')
+        .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
+
+    if (response != null && response is List<dynamic>) {
+      plants = response.map((e) => Plant.fromSearchMap(e)).toList();
+    } else {
+      plants = [];
+    }
+    notifyListeners();
+  } catch (e) {
+    print('Error al buscar plantas: $e');
+    plants = [];
+    notifyListeners();
+  }
+}
 }
