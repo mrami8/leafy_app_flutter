@@ -27,7 +27,7 @@ class PlantSearchProvider with ChangeNotifier {
         plants = response.map((e) {
           // Extraemos la imagen principal
           final imageUrl = e['imagen_principal'] ?? ''; // Usamos imagen_principal
-          return Plant.fromMap(e, imageUrl); // Asumimos que el modelo 'Plant' puede aceptar la imagen
+          return Plant.fromMap(e, ); // Asumimos que el modelo 'Plant' puede aceptar la imagen
         }).toList();
       } else {
         plants = [];

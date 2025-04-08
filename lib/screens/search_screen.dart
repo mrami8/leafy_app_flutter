@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
-import 'package:leafy_app_flutter/models/plant.dart'; // Asegúrate de que el modelo de datos esté importado
+import 'package:leafy_app_flutter/models/plant.dart';
+import 'plantDetailScreen.dart';// Asegúrate de importar la pantalla de detalle
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -35,32 +36,42 @@ class SearchScreen extends StatelessWidget {
                   itemCount: provider.plants.length,
                   itemBuilder: (context, index) {
                     final plant = provider.plants[index];
-                    return Card(
-                      elevation: 4.0,
-                      child: Column(
-                        children: [
-                          Container(
-                            width: double.infinity, // Esto asegura que la imagen ocupe todo el ancho disponible
-                            height: 300.0, // Aquí puedes ajustar la altura según lo que necesites
-                            child: Image.network(
-                              plant.imagenUrl,
-                              fit: BoxFit.cover, // Asegura que la imagen se recorte correctamente para no distorsionarse
-                            ),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PlantDetailScreen(plant: plant),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  plant.nombre,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(plant.nombreCientifico),
-                              ],
+                        );
+                      },
+                      child: Card(
+                        elevation: 4.0,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 300.0,
+                              child: Image.network(
+                                plant.imagenUrl,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    plant.nombre,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(plant.nombreCientifico),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

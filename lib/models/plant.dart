@@ -3,23 +3,30 @@ class Plant {
   final String nombre;
   final String nombreCientifico;
   final String descripcion;
-  final String imagenUrl; // Aquí almacenamos la URL de la imagen
+  final List<String> imagenes;
+  final String imagenPrincipal;
 
   Plant({
     required this.id,
     required this.nombre,
     required this.nombreCientifico,
     required this.descripcion,
-    required this.imagenUrl, // Nueva propiedad
+    required this.imagenes,
+    required this.imagenPrincipal,
   });
 
-  factory Plant.fromMap(Map<String, dynamic> map, String imageUrl) {
+  factory Plant.fromMap(Map<String, dynamic> map) {
     return Plant(
       id: map['id'],
       nombre: map['nombre'],
       nombreCientifico: map['nombre_cientifico'],
       descripcion: map['descripcion'],
-      imagenUrl: imageUrl, // Usamos la imagen proporcionada
+      imagenes: List<String>.from(map['imagenes'] ?? []),
+      imagenPrincipal: map['imagen_principal'] ?? '', // o podrías usar el primero de imagenes
     );
+  }
+
+  String get imagenUrl {
+    return imagenPrincipal.isNotEmpty ? imagenPrincipal : (imagenes.isNotEmpty ? imagenes.first : '');
   }
 }
