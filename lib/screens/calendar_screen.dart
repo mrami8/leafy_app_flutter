@@ -1,33 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:leafy_app_flutter/providers/notification_provider.dart';
 
 /// Provider para gestionar las notificaciones por fecha
-class NotificationProvider extends ChangeNotifier {
-  DateTime _selectedDate = DateTime.now();
-  final Map<DateTime, List<String>> _notifications = {};
-
-  DateTime get selectedDate => _selectedDate;
-
-  List<String> get notificationsForSelectedDate =>
-      _notifications[_selectedDate] ?? [];
-
-  void selectDate(DateTime date) {
-    _selectedDate = DateTime(date.year, date.month, date.day); // limpiar hora
-    notifyListeners();
-  }
-
-  void addNotification(String message) {
-    final dateKey = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-    );
-    _notifications.putIfAbsent(dateKey, () => []);
-    _notifications[dateKey]!.add(message);
-    notifyListeners();
-  }
-}
 
 /// Pantalla principal del calendario
 class CalendarPage extends StatelessWidget {
