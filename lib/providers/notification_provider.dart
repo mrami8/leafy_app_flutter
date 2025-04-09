@@ -25,4 +25,20 @@ class NotificationProvider extends ChangeNotifier {
     _notifications[dateKey]!.add(message);
     notifyListeners();
   }
+  
+  void removeNotification(int index) {
+  final dateKey = DateTime(
+    _selectedDate.year,
+    _selectedDate.month,
+    _selectedDate.day,
+  );
+
+  if (_notifications.containsKey(dateKey)) {
+    _notifications[dateKey]!.removeAt(index);
+    if (_notifications[dateKey]!.isEmpty) {
+      _notifications.remove(dateKey);
+    }
+    notifyListeners();
+  }
+}
 }
