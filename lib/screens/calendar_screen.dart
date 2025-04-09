@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:leafy_app_flutter/providers/notification_provider.dart';
-import 'package:leafy_app_flutter/widgets/add_notification_form.dart';
-
-
+import 'package:leafy_app_flutter/widget/add_notification_form.dart';
 
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
@@ -12,6 +10,7 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<NotificationProvider>(context);
+    final focusedDate = provider.selectedDate ?? DateTime.now();
 
     return Scaffold(
       appBar: AppBar(
@@ -24,11 +23,12 @@ class CalendarPage extends StatelessWidget {
             TableCalendar(
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: provider.selectedDate,
+              focusedDay: focusedDate,
               selectedDayPredicate: (day) =>
+                  provider.selectedDate != null &&
                   isSameDay(provider.selectedDate, day),
               onDaySelected: (selectedDay, focusedDay) {
-                provider.selectDate(selectedDay);
+                provider.getNotificationsForDate(selectedDay);
               },
               calendarStyle: CalendarStyle(
                 selectedDecoration: BoxDecoration(
@@ -61,7 +61,7 @@ class NotificationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<NotificationProvider>(context);
-    final notifications = provider.notificationsForSelectedDate;
+    final notifications = provider.notifications;
 
     if (notifications.isEmpty) {
       return const Center(
@@ -77,18 +77,24 @@ class NotificationList extends StatelessWidget {
         itemCount: notifications.length,
         separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (_, index) {
+          final notification = notifications[index];
+          final mensaje = notification['tipo_cuidado'] ?? 'Sin mensaje';
+          final fecha = provider.selectedDate != null
+              ? '${provider.selectedDate!.day.toString().padLeft(2, '0')}/${provider.selectedDate!.month.toString().padLeft(2, '0')}'
+              : '';
+
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(notifications[index])),
+              Expanded(child: Text(mensaje)),
               Text(
-                '${provider.selectedDate.day.toString().padLeft(2, '0')}/${provider.selectedDate.month.toString().padLeft(2, '0')}',
+                fecha,
                 style: const TextStyle(color: Colors.grey),
               ),
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  provider.removeNotification(index);
+                  provider.deleteNotification(mensaje);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Notificación eliminada'),
