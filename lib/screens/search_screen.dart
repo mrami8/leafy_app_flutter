@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
 import 'package:leafy_app_flutter/models/plant.dart';
-import 'plantDetailScreen.dart';// Asegúrate de importar la pantalla de detalle
+import 'plantDetailScreen.dart'; // Importamos la pantalla de detalle
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -38,24 +38,24 @@ class SearchScreen extends StatelessWidget {
                     final plant = provider.plants[index];
                     return GestureDetector(
                       onTap: () {
+                        // Navegamos a la pantalla de detalle
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => PlantDetailScreen(plant: plant),
-                          ),
-                        );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlantDetailScreen(plant: plant),    
+                        ),
+                      );
+
                       },
                       child: Card(
                         elevation: 4.0,
                         child: Column(
                           children: [
-                            Container(
+                            Image.network(
+                              plant.imagenPrincipal,
+                              fit: BoxFit.cover,
+                              height: 100,
                               width: double.infinity,
-                              height: 300.0,
-                              child: Image.network(
-                                plant.imagenUrl,
-                                fit: BoxFit.cover,
-                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
