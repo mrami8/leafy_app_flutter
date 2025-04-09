@@ -10,6 +10,7 @@ class SupabaseConfig {
       anonKey: supabaseAnonKey,
     );
   }
+  
 
   static Future<AuthResponse> login(String email, String password) async {
     final client = Supabase.instance.client;
