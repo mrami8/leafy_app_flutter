@@ -21,8 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()), // Proveedor para autenticación
         ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)), // Proveedor para búsqueda de plantas
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => UserProfileProvider()),
-
+        ChangeNotifierProvider(create: (_) => UserProfileProvider()), // Proveedor para perfil del usuario
       ],
       child: MaterialApp(
         home: Consumer<AuthProvider>(

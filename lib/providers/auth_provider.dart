@@ -7,13 +7,18 @@ class AuthProvider extends ChangeNotifier {
   Session? _session;
   User? _user;
   Map<String, dynamic>? _userProfile;
+  bool _isLoading = false;  // Estado de carga
 
   Session? get session => _session;
   User? get user => _user;
   Map<String, dynamic>? get userProfile => _userProfile;
+  bool get isLoading => _isLoading;  // Getter para el estado de carga
 
   // Cargar sesión al iniciar la app
   Future<void> loadSession() async {
+    _isLoading = true; // Iniciar la carga
+    notifyListeners();
+
     _session = supabase.auth.currentSession;
     _user = supabase.auth.currentUser;
 
@@ -21,6 +26,7 @@ class AuthProvider extends ChangeNotifier {
       await _loadUserProfile();
     }
 
+    _isLoading = false; // Finalizar la carga
     notifyListeners();
   }
 
@@ -74,15 +80,19 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Cargar perfil del usuario desde tabla "usuarios"
+  // Cargar perfil del usuario
   Future<void> _loadUserProfile() async {
-    final result = await supabase
-        .from('usuarios')
-        .select()
-        .eq('id', _user!.id)
-        .maybeSingle();
+    try {
+      final result = await supabase
+          .from('usuarios')
+          .select()
+          .eq('id', _user!.id)
+          .maybeSingle();
 
-    _userProfile = result;
+      _userProfile = result;
+    } catch (e) {
+      print('Error cargando perfil: $e');
+    }
   }
 
   // Logout

@@ -8,7 +8,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProfileProvider>(context);
+    final userProfileProvider = Provider.of<UserProfileProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,15 +26,17 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            /// 🔽 Nombre de usuario desde el provider
             Text(
-              userProvider.username,
+              userProfileProvider.username.isNotEmpty
+                  ? userProfileProvider.username
+                  : "Cargando...",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            /// 🔽 Email desde el provider
             Text(
-              userProvider.email,
+              userProfileProvider.email.isNotEmpty
+                  ? userProfileProvider.email
+                  : "Cargando...",
               style: const TextStyle(color: Colors.grey),
             ),
 
