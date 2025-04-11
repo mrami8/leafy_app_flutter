@@ -1,53 +1,64 @@
-  import 'package:flutter/material.dart';
-  import 'package:provider/provider.dart';
-  import 'package:leafy_app_flutter/providers/notification_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:leafy_app_flutter/providers/notification_provider.dart';
 
-  class AddNotificationForm extends StatefulWidget {
-    const AddNotificationForm({super.key});
+class AddNotificationForm extends StatelessWidget {
+  const AddNotificationForm({super.key});
 
-    @override
-    State<AddNotificationForm> createState() => _AddNotificationFormState();
+  void _addNotification(BuildContext context, String tipo) async {
+    final provider = Provider.of<NotificationProvider>(context, listen: false);
+    await provider.addNotification(tipo);
+    await provider.getAllNotifications(); // actualiza la lista completa
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Notificación de $tipo añadida')),
+    );
   }
 
-  class _AddNotificationFormState extends State<AddNotificationForm> {
-    final TextEditingController _controller = TextEditingController();
-
-    void _submit() {
-      final text = _controller.text.trim();
-      if (text.isNotEmpty) {
-        Provider.of<NotificationProvider>(context, listen: false)
-            .addNotification(text);
-        _controller.clear();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Notificación añadida'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    }
-
-    @override
-    Widget build(BuildContext context) {
-      return Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                labelText: 'Añadir notificación',
-                border: OutlineInputBorder(),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          'Añadir tipo de cuidado:',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          alignment: WrapAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                textStyle: const TextStyle(fontSize: 16),
               ),
-              onSubmitted: (_) => _submit(),
+              onPressed: () => _addNotification(context, 'Riego'),
+              icon: const Icon(Icons.water_drop),
+              label: const Text('Riego'),
             ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: _submit,
-            child: const Icon(Icons.add),
-          ),
-        ],
-      );
-    }
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              onPressed: () => _addNotification(context, 'Poda'),
+              icon: const Icon(Icons.content_cut),
+              label: const Text('Poda'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              onPressed: () => _addNotification(context, 'Fertilización'),
+              icon: const Icon(Icons.local_florist),
+              label: const Text('Fertilización'),
+            ),
+          ],
+        ),
+      ],
+    );
   }
+}

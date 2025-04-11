@@ -4,20 +4,34 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:leafy_app_flutter/providers/notification_provider.dart';
 import 'package:leafy_app_flutter/widget/add_notification_form.dart';
 
-class CalendarPage extends StatelessWidget {
+class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
+
+  @override
+  State<CalendarPage> createState() => _CalendarPageState();
+}
+
+class _CalendarPageState extends State<CalendarPage> {
+  @override
+  void initState() {
+    super.initState();
+    // cargar notificaciones de hoy al abrir
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NotificationProvider>(context, listen: false).getAllNotifications();
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<NotificationProvider>(context);
     final focusedDate = provider.selectedDate ?? DateTime.now();
+    
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calendario'),
-      ),
+      appBar: AppBar(title: const Text('Calendario')),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             TableCalendar(
@@ -27,10 +41,10 @@ class CalendarPage extends StatelessWidget {
               selectedDayPredicate: (day) =>
                   provider.selectedDate != null &&
                   isSameDay(provider.selectedDate, day),
-              onDaySelected: (selectedDay, focusedDay) {
+              onDaySelected: (selectedDay, _) {
                 provider.getNotificationsForDate(selectedDay);
               },
-              calendarStyle: CalendarStyle(
+              calendarStyle: const CalendarStyle(
                 selectedDecoration: BoxDecoration(
                   color: Colors.green,
                   shape: BoxShape.circle,
@@ -64,9 +78,7 @@ class NotificationList extends StatelessWidget {
     final notifications = provider.notifications;
 
     if (notifications.isEmpty) {
-      return const Center(
-        child: Text('No hay notificaciones para esta fecha.'),
-      );
+      return const Center(child: Text('No hay notificaciones para esta fecha.'));
     }
 
     return Card(
@@ -87,19 +99,13 @@ class NotificationList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: Text(mensaje)),
-              Text(
-                fecha,
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text(fecha, style: const TextStyle(color: Colors.grey)),
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
                   provider.deleteNotification(mensaje);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Notificación eliminada'),
-                      duration: Duration(seconds: 2),
-                    ),
+                    const SnackBar(content: Text('Notificación eliminada')),
                   );
                 },
               ),

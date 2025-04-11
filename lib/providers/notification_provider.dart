@@ -5,70 +5,113 @@ class NotificationProvider extends ChangeNotifier {
   List<Map<String, dynamic>> notifications = [];
   DateTime? selectedDate;
 
-  // Obtiene las notificaciones (tipo_cuidado) para la fecha seleccionada desde Supabase
+  // Cargar notificaciones desde Supabase para una fecha concreta
   Future<void> getNotificationsForDate(DateTime date) async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
-    // Formatea la fecha a 'YYYY-MM-DD' para usar en la consulta (asumiendo columna de tipo date)
-    final dateString = "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-    // Limpia notificaciones actuales y establece la nueva fecha seleccionada
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) {
+      print('⚠️ Usuario no logueado');
+      return;
+    }
+
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+
     selectedDate = date;
     notifications = [];
     notifyListeners();
-    try {
+
+    try { 
       final result = await Supabase.instance.client
           .from('calendario')
           .select()
-          .eq('id_usuario', userId)
-          .eq('fecha', dateString);
-      // Actualiza la lista de notificaciones con los resultados obtenidos
+          .eq('id_usuario', user.id)
+          .gte('fecha', start.toIso8601String())
+          .lt('fecha', end.toIso8601String());
+
       notifications = (result as List).cast<Map<String, dynamic>>();
+      print('📥 Notificaciones cargadas: $notifications');
       notifyListeners();
     } catch (e) {
-      print('Error fetching notifications: $e');
+      print('❌ Error al obtener notificaciones: $e');
     }
   }
 
-  // Añade una nueva notificación (tipo_cuidado) para la fecha seleccionada en Supabase
+  // Añadir una nueva notificación
   Future<void> addNotification(String message) async {
-    if (selectedDate == null) return;
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
-    // Formatea la fecha seleccionada a 'YYYY-MM-DD'
-    final dateString = "${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}";
-    final newRecord = {
-      'id_usuario': userId,
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null || selectedDate == null) {
+      print('⚠️ Usuario no logueado o fecha no seleccionada');
+      return;
+    }
+
+    const dummyPlantId = 'fdd93415-6e05-412d-b32c-cd778d990896'; 
+
+   final newRecord = {
+      'id_usuario': user.id,
+      'id_planta': dummyPlantId,
       'tipo_cuidado': message,
-      'fecha': dateString,
+      'fecha': selectedDate!.toIso8601String(), // 🔥 ¡Aquí estaba el error!
       'estado': false,
     };
+
+
+    print('🟢 Registro a insertar: $newRecord');
+
     try {
-      await Supabase.instance.client.from('calendario').insert(newRecord);
-      // Agrega la nueva notificación a la lista local y notifica a los listeners
-      notifications.add({'tipo_cuidado': message, 'estado': false});
-      notifyListeners();
-    } catch (e) {
-      print('Error adding notification: $e');
-    }
+  final response = await Supabase.instance.client
+      .from('calendario')
+      .insert(newRecord)
+      .select();
+
+     print('✅ Notificación guardada en Supabase: $response');
+    await getNotificationsForDate(selectedDate!);
+  } catch (e) {
+  print('❌ ERROR al guardar en Supabase: $e');
+}
+
   }
 
-  // Elimina una notificación (tipo_cuidado) para la fecha seleccionada en Supabase
-  Future<void> deleteNotification(String message) async {
-    if (selectedDate == null) return;
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
-    // Formatea la fecha seleccionada a 'YYYY-MM-DD'
-    final dateString = "${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}";
+  // Eliminar una notificación
+  Future<void> deleteNotification(String tipoCuidado) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null || selectedDate == null) return;
+
+    final start = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final end = start.add(const Duration(days: 1));
+
     try {
       await Supabase.instance.client
           .from('calendario')
           .delete()
-          .match({'id_usuario': userId, 'fecha': dateString, 'tipo_cuidado': message});
-      // Remueve la notificación de la lista local y notifica a los listeners
-      notifications.removeWhere((item) => item['tipo_cuidado'] == message);
-      notifyListeners();
+          .eq('id_usuario', user.id)
+          .eq('tipo_cuidado', tipoCuidado)
+          .gte('fecha', start.toIso8601String())
+          .lt('fecha', end.toIso8601String());
+
+      print('Notificación eliminada correctamente');
+      await getNotificationsForDate(selectedDate!);
     } catch (e) {
-      print('Error deleting notification: $e');
+      print(' Error al eliminar notificación: $e');
     }
   }
+
+  Future<void> getAllNotifications() async {
+  final user = Supabase.instance.client.auth.currentUser;
+  if (user == null) return;
+
+  try {
+    final result = await Supabase.instance.client
+        .from('calendario')
+        .select()
+        .eq('id_usuario', user.id)
+        .order('fecha', ascending: false); // las más recientes primero
+
+    notifications = (result as List).cast<Map<String, dynamic>>();
+    notifyListeners();
+  } catch (e) {
+    print(' Error al obtener todas las notificaciones: $e');
+  }
+}
+
+
 }
