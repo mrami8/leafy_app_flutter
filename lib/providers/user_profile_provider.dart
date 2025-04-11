@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
 import 'auth_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // Ensure this is the correct package for UserAttributes
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserProfileProvider extends ChangeNotifier {
   String _username = '';
   String _email = '';
   String _fotoPerfil = '';
-  bool _isLoading = false;  // Estado de carga
+  bool _isLoading = false;
 
   String get username => _username;
   String get email => _email;
   String get fotoPerfil => _fotoPerfil;
-  bool get isLoading => _isLoading;  // Getter para el estado de carga
+  bool get isLoading => _isLoading;
 
-  // Cargar perfil desde AuthProvider
   void loadFromAuth(AuthProvider auth) {
-  _isLoading = true; // Iniciar la carga
-  notifyListeners();
+    _isLoading = true;
+    notifyListeners();
 
-  final profile = auth.userProfile;
-  if (profile != null) {
-    _username = profile['nombre'] ?? 'Sin nombre';
-    _email = profile['email'] ?? 'Sin email';
-    _fotoPerfil = profile['foto_perfil'] ?? '';
-  } else {
-    print("No se pudo cargar el perfil del usuario.");
+    final profile = auth.userProfile;
+    if (profile != null) {
+      _username = profile['nombre'] ?? 'Sin nombre';
+      _email = profile['email'] ?? 'Sin email';
+      _fotoPerfil = profile['foto_perfil'] ?? '';
+    } else {
+      print("No se pudo cargar el perfil del usuario.");
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
-  _isLoading = false; // Finalizar la carga
-  notifyListeners();
-}
-
-  // Actualizar perfil en Supabase
   Future<void> updateProfile({required String username, required String email, required AuthProvider auth}) async {
     final supabase = auth.supabase;
     final result = await supabase.from('usuarios').update({
@@ -39,7 +37,6 @@ class UserProfileProvider extends ChangeNotifier {
       'email': email,
     }).eq('id', auth.user!.id);
 
-    // Si el correo ha cambiado, actualizarlo también en Supabase Auth
     if (email != _email) {
       await supabase.auth.updateUser(UserAttributes(email: email));
     }
@@ -47,5 +44,13 @@ class UserProfileProvider extends ChangeNotifier {
     _username = username;
     _email = email;
     notifyListeners();
+  }
+
+  // Definición de la función updatePassword
+  Future<void> updatePassword(String newPassword, AuthProvider auth) async {
+    final supabase = auth.supabase;
+    if (auth.user != null) {
+      await supabase.auth.updateUser(UserAttributes(password: newPassword));
+    }
   }
 }
