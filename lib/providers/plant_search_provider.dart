@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:leafy_app_flutter/models/plant.dart'; // Asegúrate de tener este modelo
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
-import 'package:leafy_app_flutter/models/plant.dart';
-import 'plantDetailScreen.dart'; // Importamos la pantalla de detalle
+import 'plantDetailScreen.dart';
 
 class SearchScreen extends StatelessWidget {
   @override

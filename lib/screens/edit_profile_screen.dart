@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leafy_app_flutter/providers/user_profile_provider.dart';
-import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
