@@ -82,18 +82,28 @@ class AuthProvider extends ChangeNotifier {
 
   // Cargar perfil del usuario
   Future<void> _loadUserProfile() async {
-    try {
+  try {
+    if (_user != null && _user!.email != null) {
+      print('Cargando perfil para el usuario con email: ${_user!.email}');
       final result = await supabase
           .from('usuarios')
           .select()
-          .eq('id', _user!.id)
+          .eq('email', _user!.email!) // Consulta por correo electrónico
           .maybeSingle();
 
-      _userProfile = result;
-    } catch (e) {
-      print('Error cargando perfil: $e');
+      if (result != null) {
+        _userProfile = result;
+        print('Perfil cargado: $_userProfile');
+      } else {
+        print('No se encontró el perfil del usuario en la tabla.');
+      }
+    } else {
+      print('El usuario o su correo es nulo.');
     }
+  } catch (e) {
+    print('Error cargando perfil: $e');
   }
+}
 
   // Logout
   Future<void> logout() async {

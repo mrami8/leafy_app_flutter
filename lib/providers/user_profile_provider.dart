@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'auth_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Ensure this is the correct package for UserAttributes
 
-import 'package:flutter/material.dart';
-import 'auth_provider.dart';
-
 class UserProfileProvider extends ChangeNotifier {
   String _username = '';
   String _email = '';
@@ -18,21 +15,21 @@ class UserProfileProvider extends ChangeNotifier {
 
   // Cargar perfil desde AuthProvider
   void loadFromAuth(AuthProvider auth) {
-    _isLoading = true;  // Iniciar la carga
-    notifyListeners();
+  _isLoading = true; // Iniciar la carga
+  notifyListeners();
 
-    final profile = auth.userProfile;
-    if (profile != null) {
-      _username = profile['nombre'];
-      _email = profile['email'];
-      _fotoPerfil = profile['foto_perfil'] ?? '';
-      _isLoading = false;  // Finalizar la carga
-    } else {
-      _isLoading = false;
-      print("No se pudo cargar el perfil");
-    }
-    notifyListeners();
+  final profile = auth.userProfile;
+  if (profile != null) {
+    _username = profile['nombre'] ?? 'Sin nombre';
+    _email = profile['email'] ?? 'Sin email';
+    _fotoPerfil = profile['foto_perfil'] ?? '';
+  } else {
+    print("No se pudo cargar el perfil del usuario.");
   }
+
+  _isLoading = false; // Finalizar la carga
+  notifyListeners();
+}
 
   // Actualizar perfil en Supabase
   Future<void> updateProfile({required String username, required String email, required AuthProvider auth}) async {
