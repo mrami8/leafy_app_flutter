@@ -39,7 +39,6 @@ class Plant {
 
   // Método para mapear todos los campos
  factory Plant.fromMap(Map<String, dynamic> map) {
-  print('Datos de planta recibidos: $map');
   return Plant(
     id: map['id'],
     nombre: map['nombre'],
