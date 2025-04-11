@@ -51,59 +51,61 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Registro con nombre y foto (puede ser vacía)
-  Future<bool> register(String email, String password, String nombre, {String foto = ""}) async {
-    try {
-      final response = await supabase.auth.signUp(
-        email: email,
-        password: password,
-      );
+  // Registro con nombre y foto (la contraseña se maneja automáticamente)
+Future<bool> register(String email, String password, String nombre, {String foto = ""}) async {
+  try {
+    final response = await supabase.auth.signUp(
+      email: email,
+      password: password,  // Supabase maneja la contraseña internamente
+    );
 
-      if (response.user != null) {
-        await supabase.from('usuarios').insert({
-          'id': response.user!.id,
-          'email': email,
-          'nombre': nombre,
-          'foto_perfil': foto,
-        });
+    if (response.user != null) {
+      // Insertamos los datos adicionales en la tabla 'usuarios', sin la contraseña
+      await supabase.from('usuarios').insert({
+        'id': response.user!.id,
+        'email': email,
+        'nombre': nombre,
+        'foto_perfil': foto,  // Foto opcional
+      }).then((value) {});
 
-        _session = response.session;
-        _user = response.user;
-        await _loadUserProfile();
-        notifyListeners();
-        return true;
-      }
-
-      return false;
-    } on AuthException catch (_) {
-      return false;
+      _session = response.session;
+      _user = response.user;
+      await _loadUserProfile();
+      notifyListeners();
+      return true;
     }
+
+    return false;
+  } on AuthException catch (_) {
+    return false;
   }
+}
+
 
   // Cargar perfil del usuario
   Future<void> _loadUserProfile() async {
-  try {
-    if (_user != null && _user!.email != null) {
-      print('Cargando perfil para el usuario con email: ${_user!.email}');
-      final result = await supabase
-          .from('usuarios')
-          .select()
-          .eq('email', _user!.email!) // Consulta por correo electrónico
-          .maybeSingle();
+    try {
+      if (_user != null && _user!.email != null) {
+        print('Cargando perfil para el usuario con email: ${_user!.email}');
+        final result = await supabase
+            .from('usuarios')
+            .select()
+            .eq('email', _user!.email!) // Consulta por correo electrónico
+            .maybeSingle();
 
-      if (result != null) {
-        _userProfile = result;
-        print('Perfil cargado: $_userProfile');
+        if (result != null) {
+          _userProfile = result;
+          print('Perfil cargado: $_userProfile');
+        } else {
+          print('No se encontró el perfil del usuario en la tabla.');
+        }
       } else {
-        print('No se encontró el perfil del usuario en la tabla.');
+        print('El usuario o su correo es nulo.');
       }
-    } else {
-      print('El usuario o su correo es nulo.');
+    } catch (e) {
+      print('Error cargando perfil: $e');
     }
-  } catch (e) {
-    print('Error cargando perfil: $e');
   }
-}
 
   // Logout
   Future<void> logout() async {

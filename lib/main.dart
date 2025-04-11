@@ -13,25 +13,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SupabaseConfig.init(); // Inicializamos Supabase con la configuración
 
-  final supabaseClient =
-      Supabase.instance.client; // Obtenemos el cliente de Supabase
+  final supabaseClient = Supabase.instance.client; // Obtenemos el cliente de Supabase
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider()..loadSession(),
-        ), // Proveedor para autenticación
-        ChangeNotifierProvider(
-          create: (_) => PlantSearchProvider(supabaseClient),
-        ), // Proveedor para búsqueda de plantas
+        ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()), // Proveedor para autenticación
+        ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)), // Proveedor para búsqueda de plantas
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(
           create: (context) {
-            final authProvider = Provider.of<AuthProvider>(
-              context,
-              listen: false,
-            );
+            final authProvider = Provider.of<AuthProvider>(context, listen: false);
             final userProfileProvider = UserProfileProvider();
             userProfileProvider.loadFromAuth(authProvider);
             return userProfileProvider;
