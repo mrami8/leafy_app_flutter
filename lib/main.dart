@@ -20,8 +20,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()), // Proveedor para autenticación
         ChangeNotifierProvider(create: (_) => PlantSearchProvider(supabaseClient)), // Proveedor para búsqueda de plantas
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),  
+        ChangeNotifierProvider( 
           create: (context) {
             final authProvider = Provider.of<AuthProvider>(context, listen: false);
             final userProfileProvider = UserProfileProvider();
