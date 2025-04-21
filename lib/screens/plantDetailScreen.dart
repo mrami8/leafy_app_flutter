@@ -4,9 +4,11 @@ import 'package:leafy_app_flutter/models/plant.dart';
 class PlantDetailScreen extends StatelessWidget {
   final Plant plant;
 
-  PlantDetailScreen({required this.plant}) {
+  PlantDetailScreen({super.key, required this.plant}) {
     // Agregar un print aquí para verificar los datos
-    print('Datos recibidos en la pantalla de detalles: ${plant.frecuenciaAbono}');
+    print(
+      'Datos recibidos en la pantalla de detalles: ${plant.frecuenciaAbono}',
+    );
   }
 
   @override
@@ -57,4 +59,3 @@ class PlantDetailScreen extends StatelessWidget {
     );
   }
 }
-

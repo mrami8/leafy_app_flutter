@@ -7,12 +7,12 @@ class AuthProvider extends ChangeNotifier {
   Session? _session;
   User? _user;
   Map<String, dynamic>? _userProfile;
-  bool _isLoading = false;  // Estado de carga
+  bool _isLoading = false; // Estado de carga
 
   Session? get session => _session;
   User? get user => _user;
   Map<String, dynamic>? get userProfile => _userProfile;
-  bool get isLoading => _isLoading;  // Getter para el estado de carga
+  bool get isLoading => _isLoading; // Getter para el estado de carga
 
   // Cargar sesión al iniciar la app
   Future<void> loadSession() async {
@@ -52,46 +52,54 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Registro con nombre y foto (la contraseña se maneja automáticamente)
-Future<bool> register(String email, String password, String nombre, {String foto = ""}) async {
-  try {
-    final response = await supabase.auth.signUp(
-      email: email,
-      password: password,  // Supabase maneja la contraseña internamente
-    );
+  Future<bool> register(
+    String email,
+    String password,
+    String nombre, {
+    String foto = "",
+  }) async {
+    try {
+      final response = await supabase.auth.signUp(
+        email: email,
+        password: password, // Supabase maneja la contraseña internamente
+      );
 
-    if (response.user != null) {
-      // Insertamos los datos adicionales en la tabla 'usuarios', sin la contraseña
-      await supabase.from('usuarios').insert({
-        'id': response.user!.id,
-        'email': email,
-        'nombre': nombre,
-        'foto_perfil': foto,  // Foto opcional
-      }).then((value) {});
+      if (response.user != null) {
+        // Insertamos los datos adicionales en la tabla 'usuarios', sin la contraseña
+        await supabase
+            .from('usuarios')
+            .insert({
+              'id': response.user!.id,
+              'email': email,
+              'nombre': nombre,
+              'foto_perfil': foto, // Foto opcional
+            })
+            .then((value) {});
 
-      _session = response.session;
-      _user = response.user;
-      await _loadUserProfile();
-      notifyListeners();
-      return true;
+        _session = response.session;
+        _user = response.user;
+        await _loadUserProfile();
+        notifyListeners();
+        return true;
+      }
+
+      return false;
+    } on AuthException catch (_) {
+      return false;
     }
-
-    return false;
-  } on AuthException catch (_) {
-    return false;
   }
-}
-
 
   // Cargar perfil del usuario
   Future<void> _loadUserProfile() async {
     try {
       if (_user != null && _user!.email != null) {
         print('Cargando perfil para el usuario con email: ${_user!.email}');
-        final result = await supabase
-            .from('usuarios')
-            .select()
-            .eq('email', _user!.email!) // Consulta por correo electrónico
-            .maybeSingle();
+        final result =
+            await supabase
+                .from('usuarios')
+                .select()
+                .eq('email', _user!.email!) // Consulta por correo electrónico
+                .maybeSingle();
 
         if (result != null) {
           _userProfile = result;

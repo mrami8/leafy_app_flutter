@@ -8,11 +8,10 @@ class AddNotificationForm extends StatelessWidget {
   void _addNotification(BuildContext context, String tipo) async {
     final provider = Provider.of<NotificationProvider>(context, listen: false);
     await provider.addNotification(tipo);
-    await provider.getAllNotifications(); // actualiza la lista completa
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Notificación de $tipo añadida')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Notificación de $tipo añadida')));
   }
 
   @override
@@ -31,7 +30,10 @@ class AddNotificationForm extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 textStyle: const TextStyle(fontSize: 16),
               ),
               onPressed: () => _addNotification(context, 'Riego'),
@@ -40,7 +42,10 @@ class AddNotificationForm extends StatelessWidget {
             ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 textStyle: const TextStyle(fontSize: 16),
               ),
               onPressed: () => _addNotification(context, 'Poda'),
@@ -49,7 +54,10 @@ class AddNotificationForm extends StatelessWidget {
             ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 textStyle: const TextStyle(fontSize: 16),
               ),
               onPressed: () => _addNotification(context, 'Fertilización'),

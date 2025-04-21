@@ -8,31 +8,30 @@ class PlantSearchProvider with ChangeNotifier {
 
   PlantSearchProvider(this.supabaseClient);
 
- Future<void> searchPlants(String query) async {
-  if (query.isEmpty) {
-    plants = [];
-    notifyListeners();
-    return;
-  }
-  try {
-    final response = await supabaseClient
-    .from('plantas')
-    .select('*')
-    .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
-    
-    print('Respuesta de la consulta: $response');
-
-
-    if (response != null && response is List<dynamic>) {
-      plants = response.map((e) => Plant.fromSearchMap(e)).toList();
-    } else {
+  Future<void> searchPlants(String query) async {
+    if (query.isEmpty) {
       plants = [];
+      notifyListeners();
+      return;
     }
-    notifyListeners();
-  } catch (e) {
-    print('Error al buscar plantas: $e');
-    plants = [];
-    notifyListeners();
+    try {
+      final response = await supabaseClient
+          .from('plantas')
+          .select('*')
+          .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
+
+      print('Respuesta de la consulta: $response');
+
+      if (response is List<dynamic>) {
+        plants = response.map((e) => Plant.fromSearchMap(e)).toList();
+      } else {
+        plants = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error al buscar plantas: $e');
+      plants = [];
+      notifyListeners();
+    }
   }
-}
 }

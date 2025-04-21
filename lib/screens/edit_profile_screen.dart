@@ -4,6 +4,8 @@ import 'package:leafy_app_flutter/providers/user_profile_provider.dart';
 import 'package:leafy_app_flutter/providers/auth_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
+
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
@@ -17,7 +19,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final userProfile = Provider.of<UserProfileProvider>(context, listen: false);
+    final userProfile = Provider.of<UserProfileProvider>(
+      context,
+      listen: false,
+    );
     _usernameController = TextEditingController(text: userProfile.username);
     _emailController = TextEditingController(text: userProfile.email);
     _passwordController = TextEditingController();
@@ -90,8 +95,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa un correo';
                   }
-                  if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                      .hasMatch(value)) {
+                  if (!RegExp(
+                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                  ).hasMatch(value)) {
                     return 'Por favor ingresa un correo válido';
                   }
                   return null;
