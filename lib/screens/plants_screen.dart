@@ -39,42 +39,39 @@ class _PlantsScreenState extends State<PlantsScreen> {
 
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: const Text('Añadir nueva planta'),
-            content: TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Nombre personalizado',
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final nombre = controller.text.trim();
-                  if (nombre.isNotEmpty) {
-                    Navigator.pop(context);
-                    await anadirPlantaDummy(nombre);
-                  }
-                },
-                child: const Text('Añadir'),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        title: const Text('Añadir nueva planta'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Nombre personalizado',
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final nombre = controller.text.trim();
+              if (nombre.isNotEmpty) {
+                Navigator.pop(context);
+                await anadirPlantaDummy(nombre);
+              }
+            },
+            child: const Text('Añadir'),
+          ),
+        ],
+      ),
     );
   }
 
-  // ⚠️ Esto es temporal: añade una planta dummy con un id_planta fijo
   Future<void> anadirPlantaDummy(String nombrePersonalizado) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
 
-    const dummyPlantaId =
-        'fdd93415-6e05-412d-b32c-cd778d990896'; // <-- cambia si lo necesitas
+    const dummyPlantaId = 'fdd93415-6e05-412d-b32c-cd778d990896';
 
     await Supabase.instance.client.from('jardin').insert({
       'id_usuario': user.id,
@@ -86,6 +83,14 @@ class _PlantsScreenState extends State<PlantsScreen> {
     await cargarPlantas();
   }
 
+  Future<void> eliminarJardin(String jardinId) async {
+    await Supabase.instance.client
+        .from('jardin')
+        .delete()
+        .eq('id', jardinId);
+    await cargarPlantas();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,73 +99,120 @@ class _PlantsScreenState extends State<PlantsScreen> {
         child: const Icon(Icons.add),
         onPressed: mostrarFormularioNuevaPlanta,
       ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : plantas.isEmpty
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : plantas.isEmpty
               ? const Center(
-                child: Text('Aún no tienes plantas en tu jardín 🌿'),
-              )
+                  child: Text('Aún no tienes plantas en tu jardín 🌿'),
+                )
               : GridView.builder(
-                padding: const EdgeInsets.all(12),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: plantas.length,
-                itemBuilder: (context, index) {
-                  final jardinItem = plantas[index];
-                  final info = jardinItem['plantas'];
-                  final nombre =
-                      jardinItem['nombre_personalizado'] ?? info['nombre'];
-                  final imagen = info['imagen_principal'];
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemCount: plantas.length,
+                  itemBuilder: (context, index) {
+                    final jardinItem = plantas[index];
+                    final info = jardinItem['plantas'];
+                    final nombre =
+                        jardinItem['nombre_personalizado'] ?? info['nombre'];
+                    final imagen = info['imagen_principal'];
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  PlantGrowthPage(jardinId: jardinItem['id']),
-                        ),
-                      );
-                    },
-                    child: Column(
+                    return Stack(
                       children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child:
-                                imagen != null && imagen.toString().isNotEmpty
-                                    ? Image.network(
-                                      imagen,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    )
-                                    : Container(
-                                      color: Colors.green[100],
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.local_florist,
-                                          size: 40,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PlantGrowthPage(
+                                  jardinId: jardinItem['id'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: imagen != null &&
+                                          imagen.toString().isNotEmpty
+                                      ? Image.network(
+                                          imagen,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        )
+                                      : Container(
+                                          color: Colors.green[100],
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.local_florist,
+                                              size: 40,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                nombre,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          nombre,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.black45,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.white, size: 20),
+                              onPressed: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: const Text('¿Eliminar planta?'),
+                                    content: const Text('Esta acción no se puede deshacer.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, false),
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        child: const Text('Eliminar'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirm == true) {
+                                  await eliminarJardin(jardinItem['id']);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Planta eliminada del jardín.'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),
     );
   }
 }
