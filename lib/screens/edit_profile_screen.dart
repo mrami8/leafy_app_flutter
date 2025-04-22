@@ -42,8 +42,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final userProfileProvider = Provider.of<UserProfileProvider>(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFEAF4E4),
       appBar: AppBar(
         title: Text('Editar Perfil'),
+        backgroundColor: const Color(0xFFD6E8C4),
         actions: [
           IconButton(
             icon: Icon(Icons.save),
@@ -55,7 +57,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   auth: authProvider,
                 );
 
-                // Si se ingresó una nueva contraseña, actualizarla
                 if (_passwordController.text.isNotEmpty) {
                   await userProfileProvider.updatePassword(
                     _passwordController.text,
@@ -78,7 +79,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Nombre
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Nombre'),
+                decoration: InputDecoration(
+                  labelText: 'Nombre',
+                  filled: true,
+                  fillColor: const Color(0xFFF4F4F4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa un nombre';
@@ -90,7 +99,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Correo
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Correo electrónico'),
+                decoration: InputDecoration(
+                  labelText: 'Correo electrónico',
+                  filled: true,
+                  fillColor: const Color(0xFFF4F4F4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa un correo';
@@ -108,7 +125,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Contraseña (opcional)'),
+                decoration: InputDecoration(
+                  labelText: 'Contraseña (opcional)',
+                  filled: true,
+                  fillColor: const Color(0xFFF4F4F4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
             ],
           ),
