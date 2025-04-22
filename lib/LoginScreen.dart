@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main_screen.dart';
 import 'providers/auth_provider.dart';
+import 'providers/user_profile_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,12 +14,16 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nombreController = TextEditingController();
+  final _nombreController = TextEditingController(); // Solo para registro
 
   bool isRegistering = false;
 
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
+
+    await authProvider.logout();
 
     bool success = await authProvider.login(
       _emailController.text.trim(),
@@ -26,13 +31,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
+      userProfileProvider.loadFromAuth(authProvider);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al iniciar sesión')),
+        const SnackBar(content: Text('Error al iniciar sesión')),
       );
     }
   }
@@ -48,14 +55,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
+        const SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
       );
       setState(() {
         isRegistering = false;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al registrarse')),
+        const SnackBar(content: Text('Error al registrarse')),
       );
     }
   }
@@ -67,11 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/FondoPantalla.jpg', // Usa la imagen que subiste
+            'assets/FondoPantalla.jpg',
             fit: BoxFit.cover,
           ),
           Container(
-            color: Colors.black.withOpacity(0.5), // Capa para contraste
+            color: Colors.black.withOpacity(0.5),
           ),
           Center(
             child: SingleChildScrollView(
@@ -86,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   Text(
                     isRegistering ? "Crea tu cuenta" : "Bienvenido de nuevo",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -103,7 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Colors.green.shade700,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 48, vertical: 14,
+                        horizontal: 48,
+                        vertical: 14,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

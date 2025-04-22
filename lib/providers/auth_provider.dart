@@ -23,6 +23,7 @@ class AuthProvider extends ChangeNotifier {
     _user = supabase.auth.currentUser;
 
     if (_user != null) {
+      await _asegurarUsuarioRegistrado();
       await _loadUserProfile();
     }
 
@@ -41,6 +42,7 @@ class AuthProvider extends ChangeNotifier {
       if (response.session != null) {
         _session = response.session;
         _user = response.user;
+        await _asegurarUsuarioRegistrado();
         await _loadUserProfile();
         notifyListeners();
         return true;
@@ -123,4 +125,31 @@ class AuthProvider extends ChangeNotifier {
     _userProfile = null;
     notifyListeners();
   }
+
+  Future<void> _asegurarUsuarioRegistrado() async {
+  if (_user == null || _user!.email == null) return;
+
+  try {
+    final existing = await supabase
+        .from('usuarios')
+        .select()
+        .eq('email', _user!.email!)
+        .maybeSingle();
+
+    if (existing == null) {
+      await supabase.from('usuarios').insert({
+        'id': _user!.id,          // seguimos usando el ID real
+        'email': _user!.email,
+        'nombre': 'Usuario nuevo',
+        'foto_perfil': '',
+      });
+      print('✅ Usuario creado automáticamente en tabla usuarios');
+    } else {
+      print('🟢 Usuario ya existe en tabla usuarios (por email)');
+    }
+  } catch (e) {
+    print('❌ Error asegurando usuario registrado: $e');
+  }
+}
+
 }
