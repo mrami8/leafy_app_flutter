@@ -9,11 +9,10 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
+      backgroundColor: const Color(0xFFEAF4E4),
       body: SafeArea(
         child: Column(
           children: [
-            // Header superior similar al diseño mostrado
             Container(
               color: const Color(0xFFD6E8C4),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -28,24 +27,9 @@ class SearchScreen extends StatelessWidget {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Text(
-                        "Perfil1",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(width: 8),
-                      const CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.black12,
-                        child: Icon(Icons.person, size: 18),
-                      )
-                    ],
-                  )
                 ],
               ),
             ),
-
             // Barra de búsqueda
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -96,7 +80,7 @@ class SearchScreen extends StatelessWidget {
                       crossAxisCount: 2,
                       crossAxisSpacing: 12.0,
                       mainAxisSpacing: 12.0,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 1.2,
                     ),
                     itemCount: provider.plants.length,
                     itemBuilder: (context, index) {
