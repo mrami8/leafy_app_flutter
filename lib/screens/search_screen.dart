@@ -9,36 +9,94 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text('Buscar Plantas')),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(hintText: 'Buscar plantas'),
-                onChanged: (query) {
-                  Provider.of<PlantSearchProvider>(
-                    context,
-                    listen: false,
-                  ).searchPlants(query);
-                },
+            // Header superior similar al diseño mostrado
+            Container(
+              color: const Color(0xFFD6E8C4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "LEAFY",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Perfil1",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(width: 8),
+                      const CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.black12,
+                        child: Icon(Icons.person, size: 18),
+                      )
+                    ],
+                  )
+                ],
               ),
             ),
+
+            // Barra de búsqueda
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                ),
+                child: TextField(
+                  onChanged: (query) {
+                    Provider.of<PlantSearchProvider>(
+                      context,
+                      listen: false,
+                    ).searchPlants(query);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Provider.of<PlantSearchProvider>(
+                          context,
+                          listen: false,
+                        ).searchPlants('');
+                      },
+                    ),
+                    hintText: 'Buscar plantas',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ),
+
+            // Resultados
             Expanded(
               child: Consumer<PlantSearchProvider>(
                 builder: (context, provider, _) {
                   if (provider.plants.isEmpty) {
-                    return Center(child: Text('No se encontraron plantas.'));
+                    return const Center(
+                      child: Text('No se encontraron plantas.'),
+                    );
                   }
                   return GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 6.0,
-                      mainAxisSpacing: 6.0,
-                      childAspectRatio: 1.2,
+                      crossAxisSpacing: 12.0,
+                      mainAxisSpacing: 12.0,
+                      childAspectRatio: 0.75,
                     ),
                     itemCount: provider.plants.length,
                     itemBuilder: (context, index) {
@@ -48,81 +106,77 @@ class SearchScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) => PlantDetailScreen(plant: plant),
+                              builder: (context) =>
+                                  PlantDetailScreen(plant: plant),
                             ),
                           );
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 2,
                           margin: EdgeInsets.zero,
-                          child: SizedBox(
-                            width: 150,
-                            height: 230,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(8),
-                                  ),
-                                  child: Container(
-                                    height: 120,
-                                    width: double.infinity,
-                                    color: Colors.grey[200],
-                                    child: Image.network(
-                                      plant.imagenPrincipal,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return Icon(
-                                          Icons.broken_image,
-                                          size: 50,
-                                          color: Colors.grey,
-                                        );
-                                      },
-                                    ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
+                                ),
+                                child: Container(
+                                  height: 120,
+                                  color: Colors.grey[200],
+                                  child: Image.network(
+                                    plant.imagenPrincipal,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (
+                                      context,
+                                      error,
+                                      stackTrace,
+                                    ) {
+                                      return const Icon(
+                                        Icons.broken_image,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      );
+                                    },
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
-                                    children: [
-                                      if (plant.nombre.trim().isNotEmpty)
-                                        Text(
-                                          plant.nombre,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (plant.nombre.trim().isNotEmpty)
+                                      Text(
+                                        plant.nombre,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
                                         ),
-                                      if (plant.nombreCientifico
-                                          .trim()
-                                          .isNotEmpty)
-                                        Text(
-                                          plant.nombreCientifico,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.grey[600],
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    if (plant.nombreCientifico
+                                        .trim()
+                                        .isNotEmpty)
+                                      Text(
+                                        plant.nombreCientifico,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[600],
                                         ),
-                                    ],
-                                  ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       );
