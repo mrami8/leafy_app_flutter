@@ -23,7 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final userProfileProvider =
         Provider.of<UserProfileProvider>(context, listen: false);
 
-    // Limpia cualquier sesión anterior (por si acaso)
     await authProvider.logout();
 
     bool success = await authProvider.login(
@@ -32,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
-      // Recargar perfil del nuevo usuario
       userProfileProvider.loadFromAuth(authProvider);
 
       Navigator.pushReplacement(
@@ -72,48 +70,106 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(isRegistering ? "Registro" : "Iniciar Sesión")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isRegistering)
-              TextField(
-                controller: _nombreController,
-                decoration: const InputDecoration(labelText: "Nombre"),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/FondoPantalla.jpg',
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.5),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/LogoLeafy.png',
+                    height: 120,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    isRegistering ? "Crea tu cuenta" : "Bienvenido de nuevo",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  if (isRegistering)
+                    _buildTextField("Nombre", _nombreController),
+                  _buildTextField("Correo electrónico", _emailController),
+                  _buildTextField("Contraseña", _passwordController, isPassword: true),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 48,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (isRegistering) {
+                        _handleRegister(context);
+                      } else {
+                        _handleLogin(context);
+                      }
+                    },
+                    child: Text(
+                      isRegistering ? "REGISTRARSE" : "INICIAR SESIÓN",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isRegistering = !isRegistering;
+                      });
+                    },
+                    child: Text(
+                      isRegistering
+                          ? "¿Ya tienes cuenta? Inicia sesión"
+                          : "¿No tienes cuenta? Regístrate",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  )
+                ],
               ),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: "Correo"),
             ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: "Contraseña"),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (isRegistering) {
-                  _handleRegister(context);
-                } else {
-                  _handleLogin(context);
-                }
-              },
-              child: Text(isRegistering ? "Registrarse" : "Iniciar Sesión"),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  isRegistering = !isRegistering;
-                });
-              },
-              child: Text(isRegistering
-                  ? "¿Ya tienes cuenta? Inicia sesión"
-                  : "¿No tienes cuenta? Regístrate"),
-            )
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool isPassword = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white70),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white54),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       ),
     );
