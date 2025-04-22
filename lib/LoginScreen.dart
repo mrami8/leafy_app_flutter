@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main_screen.dart';
 import 'providers/auth_provider.dart';
+import 'providers/user_profile_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
+
+    // Limpia cualquier sesión anterior (por si acaso)
+    await authProvider.logout();
 
     bool success = await authProvider.login(
       _emailController.text.trim(),
@@ -26,13 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
+      // Recargar perfil del nuevo usuario
+      userProfileProvider.loadFromAuth(authProvider);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al iniciar sesión')),
+        const SnackBar(content: Text('Error al iniciar sesión')),
       );
     }
   }
@@ -48,14 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
+        const SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
       );
       setState(() {
         isRegistering = false;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al registrarse')),
+        const SnackBar(content: Text('Error al registrarse')),
       );
     }
   }
@@ -65,25 +74,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(isRegistering ? "Registro" : "Iniciar Sesión")),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (isRegistering)
               TextField(
                 controller: _nombreController,
-                decoration: InputDecoration(labelText: "Nombre"),
+                decoration: const InputDecoration(labelText: "Nombre"),
               ),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: "Correo"),
+              decoration: const InputDecoration(labelText: "Correo"),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: "Contraseña"),
+              decoration: const InputDecoration(labelText: "Contraseña"),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 if (isRegistering) {
