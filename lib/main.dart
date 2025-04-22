@@ -41,6 +41,8 @@ void main() async {
         ), // Proveedor para perfil del usuario
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Leafy App',
         home: Consumer<AuthProvider>(
           builder: (context, auth, _) {
             // Dependiendo de si hay sesión, mostramos la pantalla principal o la de login
