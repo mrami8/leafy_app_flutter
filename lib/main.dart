@@ -7,6 +7,7 @@ import 'providers/auth_provider.dart';
 import 'providers/plant_search_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/user_profile_provider.dart';
+import 'providers/progress_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -26,6 +27,7 @@ void main() async {
           create: (_) => PlantSearchProvider(supabaseClient),
         ), // Proveedor para búsqueda de plantas
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ProgressProvider()),
         ChangeNotifierProvider(
           create: (context) {
             final authProvider = Provider.of<AuthProvider>(

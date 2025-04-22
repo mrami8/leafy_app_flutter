@@ -15,10 +15,13 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    // cargar notificaciones de hoy al abrir
+    // cargar notificaciones del día actual al abrir
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<NotificationProvider>(context, listen: false).getAllNotifications();
-
+      final today = DateTime.now();
+      Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      ).getNotificationsForDate(today);
     });
   }
 
@@ -26,7 +29,6 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<NotificationProvider>(context);
     final focusedDate = provider.selectedDate ?? DateTime.now();
-    
 
     return Scaffold(
       appBar: AppBar(title: const Text('Calendario')),
@@ -38,9 +40,10 @@ class _CalendarPageState extends State<CalendarPage> {
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: focusedDate,
-              selectedDayPredicate: (day) =>
-                  provider.selectedDate != null &&
-                  isSameDay(provider.selectedDate, day),
+              selectedDayPredicate:
+                  (day) =>
+                      provider.selectedDate != null &&
+                      isSameDay(provider.selectedDate, day),
               onDaySelected: (selectedDay, _) {
                 provider.getNotificationsForDate(selectedDay);
               },
@@ -54,9 +57,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   shape: BoxShape.circle,
                 ),
               ),
-              availableCalendarFormats: const {
-                CalendarFormat.month: 'Mes',
-              },
+              availableCalendarFormats: const {CalendarFormat.month: 'Mes'},
             ),
             const SizedBox(height: 12),
             const AddNotificationForm(),
@@ -78,7 +79,9 @@ class NotificationList extends StatelessWidget {
     final notifications = provider.notifications;
 
     if (notifications.isEmpty) {
-      return const Center(child: Text('No hay notificaciones para esta fecha.'));
+      return const Center(
+        child: Text('No hay notificaciones para esta fecha.'),
+      );
     }
 
     return Card(
@@ -91,9 +94,10 @@ class NotificationList extends StatelessWidget {
         itemBuilder: (_, index) {
           final notification = notifications[index];
           final mensaje = notification['tipo_cuidado'] ?? 'Sin mensaje';
-          final fecha = provider.selectedDate != null
-              ? '${provider.selectedDate!.day.toString().padLeft(2, '0')}/${provider.selectedDate!.month.toString().padLeft(2, '0')}'
-              : '';
+          final fecha =
+              provider.selectedDate != null
+                  ? '${provider.selectedDate!.day.toString().padLeft(2, '0')}/${provider.selectedDate!.month.toString().padLeft(2, '0')}'
+                  : '';
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

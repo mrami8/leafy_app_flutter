@@ -22,11 +22,7 @@ class PlantSearchProvider with ChangeNotifier {
 
       print('Respuesta de la consulta: $response');
 
-      if (response is List<dynamic>) {
-        plants = response.map((e) => Plant.fromSearchMap(e)).toList();
-      } else {
-        plants = [];
-      }
+      plants = response.map((e) => Plant.fromSearchMap(e)).toList();
       notifyListeners();
     } catch (e) {
       print('Error al buscar plantas: $e');

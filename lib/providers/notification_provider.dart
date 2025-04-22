@@ -20,7 +20,7 @@ class NotificationProvider extends ChangeNotifier {
     notifications = [];
     notifyListeners();
 
-    try { 
+    try {
       final result = await Supabase.instance.client
           .from('calendario')
           .select()
@@ -32,7 +32,7 @@ class NotificationProvider extends ChangeNotifier {
       print('📥 Notificaciones cargadas: $notifications');
       notifyListeners();
     } catch (e) {
-      print('❌ Error al obtener notificaciones: $e');
+      print(' Error al obtener notificaciones: $e');
     }
   }
 
@@ -40,13 +40,13 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> addNotification(String message) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null || selectedDate == null) {
-      print('⚠️ Usuario no logueado o fecha no seleccionada');
+      print(' Usuario no logueado o fecha no seleccionada');
       return;
     }
 
-    const dummyPlantId = 'fdd93415-6e05-412d-b32c-cd778d990896'; 
+    const dummyPlantId = 'fdd93415-6e05-412d-b32c-cd778d990896';
 
-   final newRecord = {
+    final newRecord = {
       'id_usuario': user.id,
       'id_planta': dummyPlantId,
       'tipo_cuidado': message,
@@ -54,21 +54,20 @@ class NotificationProvider extends ChangeNotifier {
       'estado': false,
     };
 
-
-    print('🟢 Registro a insertar: $newRecord');
+    print(' Registro a insertar: $newRecord');
 
     try {
-  final response = await Supabase.instance.client
-      .from('calendario')
-      .insert(newRecord)
-      .select();
+      final response =
+          await Supabase.instance.client
+              .from('calendario')
+              .insert(newRecord)
+              .select();
 
-     print('✅ Notificación guardada en Supabase: $response');
-    await getNotificationsForDate(selectedDate!);
-  } catch (e) {
-  print('❌ ERROR al guardar en Supabase: $e');
-}
-
+      print(' Notificación guardada en Supabase: $response');
+      await getNotificationsForDate(selectedDate!);
+    } catch (e) {
+      print(' ERROR al guardar en Supabase: $e');
+    }
   }
 
   // Eliminar una notificación
@@ -76,7 +75,11 @@ class NotificationProvider extends ChangeNotifier {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null || selectedDate == null) return;
 
-    final start = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final start = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final end = start.add(const Duration(days: 1));
 
     try {
@@ -96,22 +99,20 @@ class NotificationProvider extends ChangeNotifier {
   }
 
   Future<void> getAllNotifications() async {
-  final user = Supabase.instance.client.auth.currentUser;
-  if (user == null) return;
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
 
-  try {
-    final result = await Supabase.instance.client
-        .from('calendario')
-        .select()
-        .eq('id_usuario', user.id)
-        .order('fecha', ascending: false); // las más recientes primero
+    try {
+      final result = await Supabase.instance.client
+          .from('calendario')
+          .select()
+          .eq('id_usuario', user.id)
+          .order('fecha', ascending: false); // las más recientes primero
 
-    notifications = (result as List).cast<Map<String, dynamic>>();
-    notifyListeners();
-  } catch (e) {
-    print(' Error al obtener todas las notificaciones: $e');
+      notifications = (result as List).cast<Map<String, dynamic>>();
+      notifyListeners();
+    } catch (e) {
+      print(' Error al obtener todas las notificaciones: $e');
+    }
   }
-}
-
-
 }
