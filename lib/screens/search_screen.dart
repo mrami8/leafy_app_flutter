@@ -80,7 +80,7 @@ class SearchScreen extends StatelessWidget {
                       crossAxisCount: 2,
                       crossAxisSpacing: 12.0,
                       mainAxisSpacing: 12.0,
-                      childAspectRatio: 1.2,
+                      childAspectRatio: 1,
                     ),
                     itemCount: provider.plants.length,
                     itemBuilder: (context, index) {
