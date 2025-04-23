@@ -15,7 +15,6 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    // cargar notificaciones del día actual al abrir
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final today = DateTime.now();
       Provider.of<NotificationProvider>(
@@ -31,38 +30,68 @@ class _CalendarPageState extends State<CalendarPage> {
     final focusedDate = provider.selectedDate ?? DateTime.now();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Calendario')),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
+      backgroundColor: const Color(0xFFEAF4E4),
+      body: SafeArea(
         child: Column(
           children: [
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: focusedDate,
-              selectedDayPredicate:
-                  (day) =>
-                      provider.selectedDate != null &&
-                      isSameDay(provider.selectedDate, day),
-              onDaySelected: (selectedDay, _) {
-                provider.getNotificationsForDate(selectedDay);
-              },
-              calendarStyle: const CalendarStyle(
-                selectedDecoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: Colors.lightGreen,
-                  shape: BoxShape.circle,
-                ),
+            Container(
+              height: 50,
+              width: double.infinity,
+              color: const Color(0xFFD7EAC8), // Color verde de la barra
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    'Calendario',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
-              availableCalendarFormats: const {CalendarFormat.month: 'Mes'},
             ),
             const SizedBox(height: 12),
-            const AddNotificationForm(),
-            const SizedBox(height: 12),
-            const Expanded(child: NotificationList()),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  children: [
+                    TableCalendar(
+                      firstDay: DateTime.utc(2020, 1, 1),
+                      lastDay: DateTime.utc(2030, 12, 31),
+                      focusedDay: focusedDate,
+                      selectedDayPredicate:
+                          (day) =>
+                              provider.selectedDate != null &&
+                              isSameDay(provider.selectedDate, day),
+                      onDaySelected: (selectedDay, _) {
+                        provider.getNotificationsForDate(selectedDay);
+                      },
+                      calendarStyle: const CalendarStyle(
+                        selectedDecoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                        ),
+                        todayDecoration: BoxDecoration(
+                          color: Colors.lightGreen,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      availableCalendarFormats: const {
+                        CalendarFormat.month: 'Mes',
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    const AddNotificationForm(),
+                    const SizedBox(height: 12),
+                    const Expanded(child: NotificationList()),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -84,11 +113,16 @@ class NotificationList extends StatelessWidget {
       );
     }
 
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 4)),
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
       child: ListView.separated(
-        padding: const EdgeInsets.all(12),
         itemCount: notifications.length,
         separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (_, index) {

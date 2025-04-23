@@ -39,31 +39,32 @@ class _PlantsScreenState extends State<PlantsScreen> {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Añadir nueva planta'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nombre personalizado',
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Añadir nueva planta'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Nombre personalizado',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final nombre = controller.text.trim();
+                  if (nombre.isNotEmpty) {
+                    Navigator.pop(context);
+                    await anadirPlantaDummy(nombre);
+                  }
+                },
+                child: const Text('Añadir'),
+              ),
+            ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final nombre = controller.text.trim();
-              if (nombre.isNotEmpty) {
-                Navigator.pop(context);
-                await anadirPlantaDummy(nombre);
-              }
-            },
-            child: const Text('Añadir'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -84,135 +85,181 @@ class _PlantsScreenState extends State<PlantsScreen> {
   }
 
   Future<void> eliminarJardin(String jardinId) async {
-    await Supabase.instance.client
-        .from('jardin')
-        .delete()
-        .eq('id', jardinId);
+    await Supabase.instance.client.from('jardin').delete().eq('id', jardinId);
     await cargarPlantas();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mi jardín')),
+      backgroundColor: const Color(0xFFEAF4E4),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: mostrarFormularioNuevaPlanta,
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : plantas.isEmpty
-              ? const Center(
-                  child: Text('Aún no tienes plantas en tu jardín 🌿'),
-                )
-              : GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  itemCount: plantas.length,
-                  itemBuilder: (context, index) {
-                    final jardinItem = plantas[index];
-                    final info = jardinItem['plantas'];
-                    final nombre =
-                        jardinItem['nombre_personalizado'] ?? info['nombre'];
-                    final imagen = info['imagen_principal'];
-
-                    return Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PlantGrowthPage(
-                                  jardinId: jardinItem['id'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: imagen != null &&
-                                          imagen.toString().isNotEmpty
-                                      ? Image.network(
-                                          imagen,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        )
-                                      : Container(
-                                          color: Colors.green[100],
-                                          child: const Center(
-                                            child: Icon(
-                                              Icons.local_florist,
-                                              size: 40,
-                                            ),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                nombre,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+      body: Column(
+        children: [
+          Container(
+            height: 50,
+            width: double.infinity,
+            color: const Color(0xFFD7EAC8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              'Mi jardín',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child:
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : plantas.isEmpty
+                    ? const Center(
+                      child: Text('Aún no tienes plantas en tu jardín 🌿'),
+                    )
+                    : GridView.builder(
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
                           ),
-                        ),
-                        Positioned(
-                          top: 6,
-                          right: 6,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.black45,
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.white, size: 20),
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: const Text('¿Eliminar planta?'),
-                                    content: const Text('Esta acción no se puede deshacer.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, false),
-                                        child: const Text('Cancelar'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, true),
-                                        child: const Text('Eliminar'),
-                                      ),
-                                    ],
+                      itemCount: plantas.length,
+                      itemBuilder: (context, index) {
+                        final jardinItem = plantas[index];
+                        final info = jardinItem['plantas'];
+                        final nombre =
+                            jardinItem['nombre_personalizado'] ??
+                            info['nombre'];
+                        final imagen = info['imagen_principal'];
+
+                        return Stack(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => PlantGrowthPage(
+                                          jardinId: jardinItem['id'],
+                                        ),
                                   ),
                                 );
-
-                                if (confirm == true) {
-                                  await eliminarJardin(jardinItem['id']);
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Planta eliminada del jardín.'),
-                                      ),
-                                    );
-                                  }
-                                }
                               },
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child:
+                                          imagen != null &&
+                                                  imagen.toString().isNotEmpty
+                                              ? Image.network(
+                                                imagen,
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                              )
+                                              : Container(
+                                                color: Colors.green[100],
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.local_florist,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                              ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    nombre,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black45,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder:
+                                          (_) => AlertDialog(
+                                            title: const Text(
+                                              '¿Eliminar planta?',
+                                            ),
+                                            content: const Text(
+                                              'Esta acción no se puede deshacer.',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed:
+                                                    () => Navigator.pop(
+                                                      context,
+                                                      false,
+                                                    ),
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed:
+                                                    () => Navigator.pop(
+                                                      context,
+                                                      true,
+                                                    ),
+                                                child: const Text('Eliminar'),
+                                              ),
+                                            ],
+                                          ),
+                                    );
+
+                                    if (confirm == true) {
+                                      await eliminarJardin(jardinItem['id']);
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Planta eliminada del jardín.',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+          ),
+        ],
+      ),
     );
   }
 }

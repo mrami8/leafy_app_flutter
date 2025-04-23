@@ -9,7 +9,7 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> getNotificationsForDate(DateTime date) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
-      print('⚠️ Usuario no logueado');
+      print(' Usuario no logueado');
       return;
     }
 
@@ -39,7 +39,7 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> addNotification(String message) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null || selectedDate == null) {
-      print('⚠️ Usuario no logueado o fecha no seleccionada');
+      print(' Usuario no logueado o fecha no seleccionada');
       return;
     }
 
@@ -53,21 +53,21 @@ class NotificationProvider extends ChangeNotifier {
       'estado': false,
     };
 
-    print('🟢 Registro a insertar: $newRecord');
+    print(' Registro a insertar: $newRecord');
 
     try {
-      final response = await Supabase.instance.client
-          .from('calendario')
-          .insert(newRecord)
-          .select();
+      final response =
+          await Supabase.instance.client
+              .from('calendario')
+              .insert(newRecord)
+              .select();
 
-      print('✅ Notificación guardada en Supabase: $response');
+      print(' Notificación guardada en Supabase: $response');
       await getNotificationsForDate(selectedDate!);
     } catch (e) {
-      print('❌ ERROR al guardar en Supabase: $e');
+      print('ERROR al guardar en Supabase: $e');
     }
   }
-
 
   // Eliminar una notificación
   Future<void> deleteNotification(String tipoCuidado) async {
