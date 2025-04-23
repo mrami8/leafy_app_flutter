@@ -16,10 +16,23 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
 
-      appBar: AppBar(
-        title: Text('Perfil'),
-        backgroundColor: const Color(0xFFD6E8C4), // Barra superior verde pastel
+      appBar: PreferredSize(
+  preferredSize: Size.fromHeight(60), // Tamaño ajustado
+  child: AppBar(
+    backgroundColor: const Color(0xFFD6E8C4),
+    centerTitle: true,
+    elevation: 0,
+    title: const Text(
+      "LEAFY",
+      style: TextStyle(
+        fontWeight: FontWeight.w800,
+        fontSize: 20,
+        letterSpacing: 1.2,
       ),
+    ),
+  ),
+),
+
 
       // Si los datos del perfil están cargando, se muestra un indicador
       body:
@@ -29,13 +42,22 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // Centrado vertical
-                    crossAxisAlignment:
-                        CrossAxisAlignment.center, // Centrado horizontal
-
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Avatar del usuario (foto o icono por defecto)
+                      // Título LEAFY
+                      Text(
+                        "LEAFY",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+
+                      SizedBox(height: 24),
+
+                      // Avatar del usuario
                       CircleAvatar(
                         radius: 50,
                         backgroundImage:

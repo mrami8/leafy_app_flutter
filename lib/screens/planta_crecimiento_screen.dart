@@ -85,6 +85,7 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
               ],
             ),
           ),
+
           const SizedBox(height: 12),
 
           // Contenedor para las fotos o mensaje si no hay ninguna

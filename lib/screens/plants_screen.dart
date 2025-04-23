@@ -109,18 +109,23 @@ class _PlantsScreenState extends State<PlantsScreen> {
         children: [
           // Barra superior con título
           Container(
-            height: 50,
+            height: 60,
             width: double.infinity,
             color: const Color(0xFFD7EAC8),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'Mi jardín',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: const Row(
+              children: [
+                Spacer(),
+                Text(
+                  "LEAFY",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                Spacer(),
+              ],
             ),
           ),
 

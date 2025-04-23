@@ -40,24 +40,20 @@ class _CalendarPageState extends State<CalendarPage> {
           children: [
             // Barra superior con título
             Container(
-              height: 50,
+              height: 60,
               width: double.infinity,
               color: const Color(0xFFD7EAC8), // Verde pastel oscuro
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'Calendario',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+              alignment: Alignment.center,
+              child: const Text(
+                'LEAFY',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
+
             const SizedBox(height: 12),
             Expanded(
               child: Padding(

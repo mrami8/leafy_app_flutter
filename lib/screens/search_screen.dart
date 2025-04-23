@@ -19,7 +19,7 @@ class SearchScreen extends StatelessWidget {
               color: const Color(0xFFD6E8C4), // Verde pastel claro
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
                     "LEAFY",
