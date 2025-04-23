@@ -14,11 +14,13 @@ dependencies:
   table_calendar: ^3.0.9
   image_picker: ^1.0.4
   uuid: ^4.0.0
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.6
 
 flutter:
   uses-material-design: true
