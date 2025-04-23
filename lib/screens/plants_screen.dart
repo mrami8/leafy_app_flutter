@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:leafy_app_flutter/screens/planta_crecimiento_screen.dart';
 
+// Pantalla que muestra las plantas añadidas por el usuario en su jardín
 class PlantsScreen extends StatefulWidget {
   const PlantsScreen({super.key});
 
@@ -10,15 +11,17 @@ class PlantsScreen extends StatefulWidget {
 }
 
 class _PlantsScreenState extends State<PlantsScreen> {
-  List<Map<String, dynamic>> plantas = [];
-  bool isLoading = true;
+  List<Map<String, dynamic>> plantas =
+      []; // Lista de jardines/planta del usuario
+  bool isLoading = true; // Controla si aún se están cargando los datos
 
   @override
   void initState() {
     super.initState();
-    cargarPlantas();
+    cargarPlantas(); // Cargar plantas al iniciar
   }
 
+  // Cargar las plantas del usuario desde la tabla 'jardin'
   Future<void> cargarPlantas() async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
@@ -26,7 +29,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
     final result = await Supabase.instance.client
         .from('jardin')
         .select('id, nombre_personalizado, plantas (nombre, imagen_principal)')
-        .eq('id_usuario', user.id);
+        .eq('id_usuario', user.id); // Solo las del usuario actual
 
     setState(() {
       plantas = (result as List).cast<Map<String, dynamic>>();
@@ -34,6 +37,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
     });
   }
 
+  // Mostrar formulario para añadir una nueva planta personalizada
   void mostrarFormularioNuevaPlanta() {
     final controller = TextEditingController();
 
@@ -58,7 +62,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
                   final nombre = controller.text.trim();
                   if (nombre.isNotEmpty) {
                     Navigator.pop(context);
-                    await anadirPlantaDummy(nombre);
+                    await anadirPlantaDummy(nombre); // Añadir planta ficticia
                   }
                 },
                 child: const Text('Añadir'),
@@ -68,6 +72,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
     );
   }
 
+  // Añadir una nueva planta dummy al jardín del usuario
   Future<void> anadirPlantaDummy(String nombrePersonalizado) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
@@ -81,9 +86,10 @@ class _PlantsScreenState extends State<PlantsScreen> {
       'fecha_adquisicion': DateTime.now().toIso8601String(),
     });
 
-    await cargarPlantas();
+    await cargarPlantas(); // Recargar tras añadir
   }
 
+  // Eliminar un jardín/planta del usuario
   Future<void> eliminarJardin(String jardinId) async {
     await Supabase.instance.client.from('jardin').delete().eq('id', jardinId);
     await cargarPlantas();
@@ -92,13 +98,16 @@ class _PlantsScreenState extends State<PlantsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
+      // Botón para añadir nueva planta
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: mostrarFormularioNuevaPlanta,
       ),
+
       body: Column(
         children: [
+          // Barra superior con título
           Container(
             height: 50,
             width: double.infinity,
@@ -114,11 +123,16 @@ class _PlantsScreenState extends State<PlantsScreen> {
               ),
             ),
           ),
+
           const SizedBox(height: 12),
+
+          // Contenido de la pantalla
           Expanded(
             child:
                 isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                      child: CircularProgressIndicator(),
+                    ) // Indicador de carga
                     : plantas.isEmpty
                     ? const Center(
                       child: Text('Aún no tienes plantas en tu jardín 🌿'),
@@ -142,6 +156,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
 
                         return Stack(
                           children: [
+                            // Tarjeta de planta
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -189,6 +204,8 @@ class _PlantsScreenState extends State<PlantsScreen> {
                                 ],
                               ),
                             ),
+
+                            // Botón de eliminar
                             Positioned(
                               top: 6,
                               right: 6,

@@ -3,23 +3,25 @@ import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
 import 'plantDetailScreen.dart';
 
+// Pantalla para buscar y visualizar plantas de la base de datos
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
       body: SafeArea(
         child: Column(
           children: [
+            // Encabezado con título de la app
             Container(
-              color: const Color(0xFFD6E8C4),
+              color: const Color(0xFFD6E8C4), // Verde pastel claro
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
+                children: const [
+                  Text(
                     "LEAFY",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
@@ -30,6 +32,7 @@ class SearchScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Barra de búsqueda
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -41,6 +44,7 @@ class SearchScreen extends StatelessWidget {
                 ),
                 child: TextField(
                   onChanged: (query) {
+                    // Realiza búsqueda a medida que se escribe
                     Provider.of<PlantSearchProvider>(
                       context,
                       listen: false,
@@ -51,6 +55,7 @@ class SearchScreen extends StatelessWidget {
                     suffixIcon: IconButton(
                       icon: Icon(Icons.close),
                       onPressed: () {
+                        // Limpia el campo y la búsqueda
                         Provider.of<PlantSearchProvider>(
                           context,
                           listen: false,
@@ -65,33 +70,39 @@ class SearchScreen extends StatelessWidget {
               ),
             ),
 
-            // Resultados
+            // Resultados de búsqueda
             Expanded(
               child: Consumer<PlantSearchProvider>(
                 builder: (context, provider, _) {
+                  // Si no hay resultados, muestra mensaje
                   if (provider.plants.isEmpty) {
                     return const Center(
                       child: Text('No se encontraron plantas.'),
                     );
                   }
+
+                  // Si hay resultados, muestra en cuadrícula
                   return GridView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12.0,
-                      mainAxisSpacing: 12.0,
-                      childAspectRatio: 1,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
+                          childAspectRatio: 1,
+                        ),
                     itemCount: provider.plants.length,
                     itemBuilder: (context, index) {
                       final plant = provider.plants[index];
+
                       return GestureDetector(
                         onTap: () {
+                          // Al tocar una planta, navega a la vista de detalle
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PlantDetailScreen(plant: plant),
+                              builder:
+                                  (context) => PlantDetailScreen(plant: plant),
                             ),
                           );
                         },
@@ -104,6 +115,7 @@ class SearchScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Imagen de la planta
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
@@ -114,11 +126,7 @@ class SearchScreen extends StatelessWidget {
                                   child: Image.network(
                                     plant.imagenPrincipal,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (
-                                      context,
-                                      error,
-                                      stackTrace,
-                                    ) {
+                                    errorBuilder: (context, error, stackTrace) {
                                       return const Icon(
                                         Icons.broken_image,
                                         size: 50,
@@ -128,6 +136,8 @@ class SearchScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+
+                              // Nombre común y científico
                               Padding(
                                 padding: const EdgeInsets.all(6.0),
                                 child: Column(

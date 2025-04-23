@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:leafy_app_flutter/models/plant.dart';
 
+// Pantalla que muestra los detalles de una planta seleccionada
 class PlantDetailScreen extends StatelessWidget {
-  final Plant plant;
+  final Plant plant; // Objeto planta recibido como argumento
 
   PlantDetailScreen({super.key, required this.plant});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado
+            // Encabezado con botón de volver y nombre de la planta
             Container(
-              color: const Color(0xFFD6E8C4),
+              color: const Color(0xFFD6E8C4), // Verde pastel del encabezado
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap:
+                        () => Navigator.pop(
+                          context,
+                        ), // Volver a la pantalla anterior
                     child: const Icon(Icons.arrow_back, size: 24),
                   ),
                   Text(
@@ -31,31 +35,36 @@ class PlantDetailScreen extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  const SizedBox(width: 24), // espacio para alinear
+                  const SizedBox(
+                    width: 24,
+                  ), // Espaciador para centrar el título
                 ],
               ),
             ),
 
-            // Contenido scrollable
+            // Contenido desplazable
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Imagen principal o marcador si no hay
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: plant.imagenPrincipal.isNotEmpty
-                          ? Image.network(
-                              plant.imagenPrincipal,
-                              fit: BoxFit.cover,
-                              height: 200,
-                            )
-                          : const Placeholder(
-                              fallbackHeight: 200,
-                            ),
+                      child:
+                          plant.imagenPrincipal.isNotEmpty
+                              ? Image.network(
+                                plant.imagenPrincipal,
+                                fit: BoxFit.cover,
+                                height: 200,
+                              )
+                              : const Placeholder(fallbackHeight: 200),
                     ),
+
                     const SizedBox(height: 12),
+
+                    // Nombre científico
                     Center(
                       child: Text(
                         plant.nombreCientifico,
@@ -67,9 +76,10 @@ class PlantDetailScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
+
                     const SizedBox(height: 16),
 
-                    // Descripción
+                    // Secciones informativas
                     _buildSectionTitle("Descripción"),
                     Text(plant.descripcion),
 
@@ -121,15 +131,19 @@ class PlantDetailScreen extends StatelessWidget {
                     _buildSectionTitle("Imágenes de la Planta:"),
 
                     const SizedBox(height: 8),
+
+                    // Galería de imágenes adicionales
                     if (plant.imagenes.isNotEmpty)
                       GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                        ),
+                        shrinkWrap: true, // Para que no tome espacio infinito
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Scroll heredado del padre
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
                         itemCount: plant.imagenes.length,
                         itemBuilder: (context, index) {
                           return ClipRRect(
@@ -153,6 +167,7 @@ class PlantDetailScreen extends StatelessWidget {
     );
   }
 
+  // Widget reutilizable para los títulos de sección
   Widget _buildSectionTitle(String title) {
     return Text(
       title,

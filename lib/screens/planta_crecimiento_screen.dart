@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/progress_provider.dart';
 
+// Pantalla que muestra el progreso de crecimiento de una planta mediante fotos
 class PlantGrowthPage extends StatefulWidget {
-  final String jardinId;
+  final String jardinId; // ID del jardín al que pertenece la planta
 
   const PlantGrowthPage({super.key, required this.jardinId});
 
@@ -16,6 +17,8 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
   @override
   void initState() {
     super.initState();
+
+    // Al iniciar la pantalla, se cargan las fotos correspondientes al jardín
     final provider = Provider.of<ProgressProvider>(context, listen: false);
     provider.cargarFotos(widget.jardinId);
   }
@@ -25,10 +28,12 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
     final provider = Provider.of<ProgressProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
+      // Botón flotante para subir fotos
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add_a_photo),
         onPressed: () {
+          // Muestra una hoja modal inferior para elegir cámara o galería
           showModalBottomSheet(
             context: context,
             builder:
@@ -55,13 +60,15 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
           );
         },
       ),
+
+      // Contenido principal
       body: Column(
         children: [
-          // Barra superior con botón de volver
+          // Barra superior con título y botón de retroceso
           Container(
             height: 50,
             width: double.infinity,
-            color: const Color(0xFFD7EAC8),
+            color: const Color(0xFFD7EAC8), // Verde pastel oscuro
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: const [
@@ -79,6 +86,8 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
             ),
           ),
           const SizedBox(height: 12),
+
+          // Contenedor para las fotos o mensaje si no hay ninguna
           Expanded(
             child:
                 provider.fotos.isEmpty
@@ -87,7 +96,7 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
                       padding: const EdgeInsets.all(12),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
+                            crossAxisCount: 2, // 2 columnas
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                           ),
@@ -97,10 +106,11 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
 
                         return Stack(
                           children: [
+                            // Imagen de la planta
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                foto['imagen_url'],
+                                foto['imagen_url'], // URL firmada
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -111,6 +121,8 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
                                         ),
                               ),
                             ),
+
+                            // Botón para eliminar la imagen, en la esquina superior derecha
                             Positioned(
                               top: 6,
                               right: 6,
@@ -126,6 +138,7 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
                                     size: 20,
                                   ),
                                   onPressed: () async {
+                                    // Cuadro de confirmación antes de eliminar
                                     final confirm = await showDialog<bool>(
                                       context: context,
                                       builder:
@@ -157,6 +170,7 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
                                           ),
                                     );
 
+                                    // Si el usuario confirma, se elimina la imagen
                                     if (confirm == true) {
                                       final success = await provider
                                           .eliminarFoto(foto['path']);

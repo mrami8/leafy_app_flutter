@@ -4,6 +4,7 @@ import 'main_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_profile_provider.dart';
 
+// Pantalla de login y registro de usuario
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -12,18 +13,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Controladores para los campos de texto
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nombreController = TextEditingController(); // Solo para registro
+  final _nombreController = TextEditingController(); // Solo usado en registro
 
-  bool isRegistering = false;
+  bool isRegistering = false; // Alterna entre login y registro
 
+  // Función para manejar el login del usuario
   Future<void> _handleLogin(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userProfileProvider =
-        Provider.of<UserProfileProvider>(context, listen: false);
+    final userProfileProvider = Provider.of<UserProfileProvider>(
+      context,
+      listen: false,
+    );
 
-    await authProvider.logout();
+    await authProvider.logout(); // Limpia sesión anterior
 
     bool success = await authProvider.login(
       _emailController.text.trim(),
@@ -31,19 +36,24 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
-      userProfileProvider.loadFromAuth(authProvider);
+      userProfileProvider.loadFromAuth(
+        authProvider,
+      ); // Carga el perfil del usuario
 
+      // Redirige al menú principal
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => MainScreen()),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al iniciar sesión')),
-      );
+      // Muestra error si falla el login
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error al iniciar sesión')));
     }
   }
 
+  // Función para manejar el registro del usuario
   Future<void> _handleRegister(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
@@ -54,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
+      // Muestra mensaje de éxito y cambia a modo login
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
       );
@@ -61,9 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
         isRegistering = false;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al registrarse')),
-      );
+      // Error en el registro
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error al registrarse')));
     }
   }
 
@@ -71,26 +83,27 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
+        fit: StackFit.expand, // Hace que el fondo ocupe toda la pantalla
         children: [
-          Image.asset(
-            'assets/FondoPantalla.jpg',
-            fit: BoxFit.cover,
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.5),
-          ),
+          // Imagen de fondo
+          Image.asset('assets/FondoPantalla.jpg', fit: BoxFit.cover),
+
+          // Capa oscura sobre el fondo para mejorar legibilidad
+          Container(color: Colors.black.withOpacity(0.5)),
+
+          // Contenido principal centrado y scrollable
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(
-                    'assets/LogoLeafy.png',
-                    height: 120,
-                  ),
+                  // Logo de la app
+                  Image.asset('assets/LogoLeafy.png', height: 120),
+
                   const SizedBox(height: 20),
+
+                  // Título dinámico según el modo
                   Text(
                     isRegistering ? "Crea tu cuenta" : "Bienvenido de nuevo",
                     style: const TextStyle(
@@ -99,12 +112,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 20),
+
+                  // Campo de nombre solo en registro
                   if (isRegistering)
                     _buildTextField("Nombre", _nombreController),
+
+                  // Campo de correo y contraseña
                   _buildTextField("Correo electrónico", _emailController),
-                  _buildTextField("Contraseña", _passwordController, isPassword: true),
+                  _buildTextField(
+                    "Contraseña",
+                    _passwordController,
+                    isPassword: true,
+                  ),
+
                   const SizedBox(height: 20),
+
+                  // Botón principal: login o registro
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade700,
@@ -129,7 +154,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Botón para cambiar entre login y registro
                   TextButton(
                     onPressed: () {
                       setState(() {
@@ -142,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : "¿No tienes cuenta? Regístrate",
                       style: const TextStyle(color: Colors.white70),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -152,12 +180,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool isPassword = false}) {
+  // Widget para construir campos de texto personalizados
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool isPassword = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextField(
         controller: controller,
-        obscureText: isPassword,
+        obscureText: isPassword, // Oculta el texto si es contraseña
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,

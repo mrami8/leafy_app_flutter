@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/user_profile_provider.dart';
 import 'package:leafy_app_flutter/providers/auth_provider.dart';
 
+// Pantalla para editar el perfil del usuario
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -11,7 +12,9 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); // Clave para validar el formulario
+
+  // Controladores para los campos de texto
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -19,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    // Cargar datos iniciales del perfil desde el provider
     final userProfile = Provider.of<UserProfileProvider>(
       context,
       listen: false,
@@ -30,6 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void dispose() {
+    // Liberar recursos de los controladores
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -42,21 +47,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final userProfileProvider = Provider.of<UserProfileProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
       appBar: AppBar(
         title: Text('Editar Perfil'),
-        backgroundColor: const Color(0xFFD6E8C4),
+        backgroundColor: const Color(0xFFD6E8C4), // Barra verde suave
         actions: [
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
+              // Validación y guardado del formulario
               if (_formKey.currentState!.validate()) {
+                // Actualiza nombre y correo
                 await userProfileProvider.updateProfile(
                   username: _usernameController.text,
                   email: _emailController.text,
                   auth: authProvider,
                 );
 
+                // Si se ingresó nueva contraseña, la actualiza
                 if (_passwordController.text.isNotEmpty) {
                   await userProfileProvider.updatePassword(
                     _passwordController.text,
@@ -64,6 +72,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   );
                 }
 
+                // Cierra la pantalla
                 Navigator.pop(context);
               }
             },
@@ -73,10 +82,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: _formKey, // Referencia al formulario para validación
           child: Column(
             children: [
-              // Nombre
+              // Campo de nombre
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -96,7 +105,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               SizedBox(height: 16),
-              // Correo
+              // Campo de correo electrónico
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -112,6 +121,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa un correo';
                   }
+                  // Validación básica de correo
                   if (!RegExp(
                     r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
                   ).hasMatch(value)) {
@@ -121,10 +131,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               SizedBox(height: 16),
-              // Contraseña (opcional)
+              // Campo de contraseña (opcional)
               TextFormField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: true, // Oculta el texto ingresado
                 decoration: InputDecoration(
                   labelText: 'Contraseña (opcional)',
                   filled: true,
