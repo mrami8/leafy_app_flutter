@@ -97,7 +97,7 @@ class _PlantGrowthPageState extends State<PlantGrowthPage> {
                       padding: const EdgeInsets.all(12),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // 2 columnas
+                            crossAxisCount: 1, // 2 columnas
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                           ),
