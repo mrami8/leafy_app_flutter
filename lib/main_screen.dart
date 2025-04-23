@@ -13,15 +13,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex =
-      0; // Índice actual de la pestaña seleccionada (0 = Buscar)
+  int _selectedIndex = 0; // Índice actual de la pestaña seleccionada (0 = Buscar)
 
   // Lista de pantallas asociadas a cada pestaña
   final List<Widget> _screens = [
-    SearchScreen(), // Índice 0: Buscar plantas
-    ProfileScreen(), // Índice 1: Perfil del usuario
-    CalendarPage(), // Índice 2: Calendario de cuidados
-    PlantsScreen(), // Índice 3: Jardín del usuario
+    SearchScreen(),    // Índice 0: Buscar plantas
+    ProfileScreen(),   // Índice 1: Perfil del usuario
+    CalendarPage(),    // Índice 2: Calendario de cuidados
+    PlantsScreen(),    // Índice 3: Jardín del usuario
   ];
 
   // Cambia la pestaña activa cuando el usuario pulsa en una del BottomNavigationBar
@@ -35,25 +34,18 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_selectedIndex], // Muestra la pantalla seleccionada
-      // Barra de navegación inferior con iconos y etiquetas
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Pestaña seleccionada
-        onTap: _onItemTapped, // Manejador al pulsar
-        type:
-            BottomNavigationBarType
-                .fixed, // Estilo fijo (todas las pestañas visibles)
-        selectedItemColor: Colors.green, // Color del icono activo
-        items: [
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: const Color(0xFFD7EAC8), // Fondo verde pastel oscuro
+        selectedItemColor: Colors.green, // Ítem activo en blanco
+        unselectedItemColor: Colors.grey[800], // Ítems inactivos en gris oscuro
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.search), label: "Buscar"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "Calendario",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_florist),
-            label: "Plantas",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Calendario"),
+          BottomNavigationBarItem(icon: Icon(Icons.local_florist), label: "Plantas"),
         ],
       ),
     );
