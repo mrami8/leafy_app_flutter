@@ -101,8 +101,8 @@ class _PlantsScreenState extends State<PlantsScreen> {
       backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
       // Botón para añadir nueva planta
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
         onPressed: mostrarFormularioNuevaPlanta,
+        child: const Icon(Icons.add),
       ),
 
       body: Column(
