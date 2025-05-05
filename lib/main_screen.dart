@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leafy_app_flutter/screens/calendar_screen.dart';
 import 'package:leafy_app_flutter/screens/plants_screen.dart';
 import 'package:leafy_app_flutter/screens/profile_screen.dart';
-import 'package:leafy_app_flutter/screens/search_screen.dart';
+import 'package:leafy_app_flutter/screens/search_screen.dart'; // Ensure this file contains the SearchScreen class
 
 // Pantalla principal que contiene la navegación entre pestañas
 class MainScreen extends StatefulWidget {

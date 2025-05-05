@@ -13,31 +13,23 @@ class PlantSearchProvider with ChangeNotifier {
 
   // Método para buscar plantas por nombre o nombre científico
   Future<void> searchPlants(String query) async {
-    // Si el texto de búsqueda está vacío, se limpia la lista y se notifica a los listeners
-    if (query.isEmpty) {
-      plants = [];
-      notifyListeners();
-      return;
-    }
+  try {
+    final response = query.isEmpty
+        ? await supabaseClient.from('plantas').select('*')
+        : await supabaseClient
+            .from('plantas')
+            .select('*')
+            .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
 
-    try {
-      // Realiza una consulta a la tabla 'plantas' usando filtros OR
-      // Busca coincidencias parciales (ilike) en los campos 'nombre' y 'nombre_cientifico'
-      final response = await supabaseClient
-          .from('plantas')
-          .select('*')
-          .or('nombre.ilike.%$query%,nombre_cientifico.ilike.%$query%');
+    print('Respuesta de la consulta: $response');
 
-      print('Respuesta de la consulta: $response');
-
-      // Convierte los resultados en objetos Plant usando el método fromSearchMap
-      plants = response.map((e) => Plant.fromSearchMap(e)).toList();
-      notifyListeners(); // Notifica a los widgets que dependen de esta lista para actualizarse
-    } catch (e) {
-      // En caso de error, se limpia la lista y se notifica
-      print('Error al buscar plantas: $e');
-      plants = [];
-      notifyListeners();
-    }
+    plants = response.map((e) => Plant.fromSearchMap(e)).toList();
+    notifyListeners();
+  } catch (e) {
+    print('Error al buscar plantas: $e');
+    plants = [];
+    notifyListeners();
   }
+}
+
 }
