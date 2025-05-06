@@ -42,22 +42,33 @@ class _CalendarPageState extends State<CalendarPage> {
             Container(
               height: 60,
               width: double.infinity,
-              color: const Color(0xFFD7EAC8), // Verde pastel oscuro
+              color: const Color(0xFFD6E8C4), // Verde pastel suave
               alignment: Alignment.center,
-              child: const Text(
-                'LEAFY',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
-                  letterSpacing: 1.2,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'LEAFY',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                      letterSpacing: 1.2,
+                      color: Color.fromARGB(255, 0, 0, 0), // Texto verde
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(
+                    Icons.energy_savings_leaf, // Ícono de hoja
+                    color: Colors.green,
+                    size: 30,
+                  ),
+                ],
               ),
             ),
-
             const SizedBox(height: 12),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
                     // Calendario interactivo
@@ -74,11 +85,11 @@ class _CalendarPageState extends State<CalendarPage> {
                       },
                       calendarStyle: const CalendarStyle(
                         selectedDecoration: BoxDecoration(
-                          color: Colors.green,
+                          color: Color(0xFF4CAF50), // Verde más intenso para selección
                           shape: BoxShape.circle,
                         ),
                         todayDecoration: BoxDecoration(
-                          color: Colors.lightGreen,
+                          color: Color(0xFF66BB6A), // Verde más suave para hoy
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -86,9 +97,9 @@ class _CalendarPageState extends State<CalendarPage> {
                         CalendarFormat.month: 'Mes',
                       },
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     const AddNotificationForm(), // Formulario para añadir notificaciones
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     const Expanded(
                       child: NotificationList(),
                     ), // Lista de notificaciones
@@ -122,13 +133,13 @@ class NotificationList extends StatelessWidget {
     // Lista con diseño decorativo y separadores entre elementos
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFFF3F7E8), // Fondo más suave para la lista
+        borderRadius: BorderRadius.circular(12), // Bordes redondeados
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 4)),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       child: ListView.separated(
         itemCount: notifications.length,
         separatorBuilder: (_, __) => const Divider(),
@@ -146,7 +157,7 @@ class NotificationList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: Text(mensaje)), // Mensaje de la notificación
-              Text(fecha, style: const TextStyle(color: Colors.grey)), // Fecha
+              Text(fecha, style: const TextStyle(color: Color(0xFFBDBDBD))), // Fecha
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
