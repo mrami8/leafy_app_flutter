@@ -35,7 +35,6 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Nombre LEAFY y árbol juntos
                   const Text(
                     "LEAFY",
                     style: TextStyle(
@@ -44,8 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  // Ícono de árbol justo al lado del nombre
-                  const SizedBox(width: 8), // Espacio entre el nombre y el ícono
+                  const SizedBox(width: 8),
                   Icon(
                     Icons.energy_savings_leaf,
                     color: Colors.green,
@@ -60,7 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
@@ -102,8 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                   return GridView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 12.0,
                       mainAxisSpacing: 12.0,
@@ -124,6 +121,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         },
                         child: Card(
+                          color: const Color.fromARGB(255, 251, 255, 247), // Fondo verde del recuadro
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -138,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                                 child: Container(
                                   height: 120,
-                                  color: Colors.grey[200],
+                                  color: const Color.fromARGB(255, 226, 253, 230),
                                   child: Image.network(
                                     plant.imagenPrincipal,
                                     fit: BoxFit.cover,
@@ -168,9 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
                                       ),
-                                    if (plant.nombreCientifico
-                                        .trim()
-                                        .isNotEmpty)
+                                    if (plant.nombreCientifico.trim().isNotEmpty)
                                       Text(
                                         plant.nombreCientifico,
                                         style: TextStyle(

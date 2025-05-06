@@ -1,148 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:leafy_app_flutter/models/plant.dart';
 
-// Pantalla que muestra los detalles de una planta seleccionada
 class PlantDetailScreen extends StatelessWidget {
-  final Plant plant; // Objeto planta recibido como argumento
+  final Plant plant;
 
   const PlantDetailScreen({super.key, required this.plant});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde claro
+      backgroundColor: const Color(0xFFEAF4E4), // Fondo verde muy claro
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado con botón de volver y nombre de la planta
+            // Encabezado
             Container(
-              color: const Color(0xFFD6E8C4), // Verde pastel del encabezado
+              color: const Color(0xFFD6E8C4), // Verde pastel
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap:
-                        () => Navigator.pop(
-                          context,
-                        ), // Volver a la pantalla anterior
+                    onTap: () => Navigator.pop(context),
                     child: const Icon(Icons.arrow_back, size: 24),
                   ),
-                  Text(
-                    plant.nombre,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
+                  Expanded(
+                    child: Text(
+                      plant.nombre,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 24,
-                  ), // Espaciador para centrar el título
+                  const SizedBox(width: 24),
                 ],
               ),
             ),
 
-            // Contenido desplazable
+            // Contenido principal
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Imagen principal o marcador si no hay
+                    // Imagen principal
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       child:
                           plant.imagenPrincipal.isNotEmpty
                               ? Image.network(
                                 plant.imagenPrincipal,
+                                height: 240,
                                 fit: BoxFit.cover,
-                                height: 200,
                               )
-                              : const Placeholder(fallbackHeight: 200),
+                              : const Placeholder(fallbackHeight: 240),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
 
                     // Nombre científico
                     Center(
                       child: Text(
                         plant.nombreCientifico,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontStyle: FontStyle.italic,
-                          color: Colors.grey[700],
+                          color: Colors.grey[800],
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
 
-                    // Secciones informativas
-                    _buildSectionTitle("Descripción"),
-                    Text(plant.descripcion),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Riego"),
-                    Text(plant.riego),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Luz"),
-                    Text(plant.luz),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Temperatura"),
-                    Text(plant.temperatura),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Humedad"),
-                    Text(plant.humedad),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Tipo de Sustrato"),
-                    Text(plant.tipoSustrato),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Frecuencia de Abono"),
-                    Text(plant.frecuenciaAbono),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Plagas Comunes"),
-                    Text(plant.plagasComunes),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Cuidados Especiales"),
-                    Text(plant.cuidadosEspeciales),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Toxicidad"),
-                    Text(plant.toxicidad),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Floración"),
-                    Text(plant.floracion),
-
-                    const SizedBox(height: 12),
-                    _buildSectionTitle("Uso Recomendado"),
-                    Text(plant.usoRecomendado),
-
-                    const SizedBox(height: 16),
-                    _buildSectionTitle("Imágenes de la Planta:"),
-
-                    const SizedBox(height: 8),
+                    // Contenedor verde con toda la información
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(
+                          0xFFD0E4C3,
+                        ), // Verde más oscuro que el fondo general
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSection("📝 Descripción", plant.descripcion),
+                          _buildSection("💧 Riego", plant.riego),
+                          _buildSection("🌞 Luz", plant.luz),
+                          _buildSection("🌡️ Temperatura", plant.temperatura),
+                          _buildSection("💦 Humedad", plant.humedad),
+                          _buildSection(
+                            "🌱 Tipo de Sustrato",
+                            plant.tipoSustrato,
+                          ),
+                          _buildSection(
+                            "🌿 Frecuencia de Abono",
+                            plant.frecuenciaAbono,
+                          ),
+                          _buildSection(
+                            "🐛 Plagas Comunes",
+                            plant.plagasComunes,
+                          ),
+                          _buildSection(
+                            "🩺 Cuidados Especiales",
+                            plant.cuidadosEspeciales,
+                          ),
+                          _buildSection("☠️ Toxicidad", plant.toxicidad),
+                          _buildSection("🌸 Floración", plant.floracion),
+                          _buildSection(
+                            "🏡 Uso Recomendado",
+                            plant.usoRecomendado,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
 
                     // Galería de imágenes adicionales
+                    const Text(
+                      "📷 Imágenes de la Planta",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     if (plant.imagenes.isNotEmpty)
                       GridView.builder(
-                        shrinkWrap: true, // Para que no tome espacio infinito
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Scroll heredado del padre
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 1,
                             ),
                         itemCount: plant.imagenes.length,
                         itemBuilder: (context, index) {
@@ -156,7 +153,10 @@ class PlantDetailScreen extends StatelessWidget {
                         },
                       )
                     else
-                      const Text("No hay imágenes adicionales."),
+                      const Text(
+                        "No hay imágenes adicionales.",
+                        style: TextStyle(color: Colors.grey),
+                      ),
                   ],
                 ),
               ),
@@ -167,14 +167,31 @@ class PlantDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget reutilizable para los títulos de sección
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 14,
-        decoration: TextDecoration.underline,
+  // Widget para secciones de texto con título e información
+  Widget _buildSection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF2D5B2F),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            content,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+              height: 1.4,
+            ),
+          ),
+        ],
       ),
     );
   }
