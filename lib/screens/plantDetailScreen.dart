@@ -50,14 +50,13 @@ class PlantDetailScreen extends StatelessWidget {
                     // Imagen principal
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child:
-                          plant.imagenPrincipal.isNotEmpty
-                              ? Image.network(
-                                plant.imagenPrincipal,
-                                height: 240,
-                                fit: BoxFit.cover,
-                              )
-                              : const Placeholder(fallbackHeight: 240),
+                      child: plant.imagenPrincipal.isNotEmpty
+                          ? Image.network(
+                              plant.imagenPrincipal,
+                              height: 240,
+                              fit: BoxFit.cover,
+                            )
+                          : const Placeholder(fallbackHeight: 240),
                     ),
 
                     const SizedBox(height: 16),
@@ -80,9 +79,7 @@ class PlantDetailScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(
-                          0xFFD0E4C3,
-                        ), // Verde más oscuro que el fondo general
+                        color: const Color(0xFFD0E4C3), // Verde más oscuro que el fondo general
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
@@ -93,34 +90,21 @@ class PlantDetailScreen extends StatelessWidget {
                           _buildSection("🌞 Luz", plant.luz),
                           _buildSection("🌡️ Temperatura", plant.temperatura),
                           _buildSection("💦 Humedad", plant.humedad),
-                          _buildSection(
-                            "🌱 Tipo de Sustrato",
-                            plant.tipoSustrato,
-                          ),
-                          _buildSection(
-                            "🌿 Frecuencia de Abono",
-                            plant.frecuenciaAbono,
-                          ),
-                          _buildSection(
-                            "🐛 Plagas Comunes",
-                            plant.plagasComunes,
-                          ),
-                          _buildSection(
-                            "🩺 Cuidados Especiales",
-                            plant.cuidadosEspeciales,
-                          ),
+                          _buildSection("🌱 Tipo de Sustrato", plant.tipoSustrato),
+                          _buildSection("🌿 Frecuencia de Abono", plant.frecuenciaAbono),
+                          _buildSection("🐛 Plagas Comunes", plant.plagasComunes),
+                          _buildSection("🩺 Cuidados Especiales", plant.cuidadosEspeciales),
                           _buildSection("☠️ Toxicidad", plant.toxicidad),
                           _buildSection("🌸 Floración", plant.floracion),
-                          _buildSection(
-                            "🏡 Uso Recomendado",
-                            plant.usoRecomendado,
-                          ),
+                          _buildSection("🏡 Uso Recomendado", plant.usoRecomendado),
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 24),
 
-                    // Galería de imágenes adicionales
+                    // Galería de imágenes adicionales (comentada por ahora)
+                    /*
                     const Text(
                       "📷 Imágenes de la Planta",
                       style: TextStyle(
@@ -134,13 +118,12 @@ class PlantDetailScreen extends StatelessWidget {
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              childAspectRatio: 1,
-                            ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1,
+                        ),
                         itemCount: plant.imagenes.length,
                         itemBuilder: (context, index) {
                           return ClipRRect(
@@ -157,6 +140,7 @@ class PlantDetailScreen extends StatelessWidget {
                         "No hay imágenes adicionales.",
                         style: TextStyle(color: Colors.grey),
                       ),
+                    */
                   ],
                 ),
               ),
