@@ -21,13 +21,24 @@ class ProfileScreen extends StatelessWidget {
           backgroundColor: const Color(0xFFD6E8C4),
           centerTitle: true,
           elevation: 0,
-          title: const Text(
-            "LEAFY",
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
-              letterSpacing: 1.2,
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "LEAFY",
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 20,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(width: 8), // Espacio entre el nombre y el ícono
+              const Icon(
+                Icons.energy_savings_leaf, // Ícono de hoja
+                color: Colors.green,
+                size: 30,
+              ),
+            ],
           ),
         ),
       ),
@@ -48,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 4,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -147,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 4,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),

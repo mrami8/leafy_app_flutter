@@ -28,20 +28,28 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado
+            // Encabezado con árbol al lado de LEAFY
             Container(
               color: const Color(0xFFD6E8C4),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
+                children: [
+                  // Nombre LEAFY y árbol juntos
+                  const Text(
                     "LEAFY",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 20,
                       letterSpacing: 1.2,
                     ),
+                  ),
+                  // Ícono de árbol justo al lado del nombre
+                  const SizedBox(width: 8), // Espacio entre el nombre y el ícono
+                  Icon(
+                    Icons.energy_savings_leaf,
+                    color: Colors.green,
+                    size: 30,
                   ),
                 ],
               ),
@@ -64,9 +72,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     ).searchPlants(query);
                   },
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       onPressed: () {
                         Provider.of<PlantSearchProvider>(
                           context,
@@ -76,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     hintText: 'Buscar plantas',
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
               ),
