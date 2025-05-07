@@ -1,9 +1,10 @@
+// Importaciones necesarias
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
 import 'plantDetailScreen.dart';
 
-// Pantalla para buscar y visualizar plantas de la base de datos
+// Pantalla que permite buscar y visualizar plantas desde la base de datos
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -15,7 +16,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    // Cargar todas las plantas al iniciar
+    // Al iniciar la pantalla, se buscan todas las plantas sin filtro
     Future.microtask(() {
       Provider.of<PlantSearchProvider>(context, listen: false).searchPlants('');
     });
@@ -24,11 +25,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF4E4),
+      backgroundColor: const Color(0xFFEAF4E4), // Color de fondo general
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado con árbol al lado de LEAFY
+            // Encabezado superior con el texto LEAFY y un ícono de hoja
             Container(
               color: const Color(0xFFD6E8C4),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -53,16 +54,17 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
-            // Barra de búsqueda
+            // Barra de búsqueda para filtrar plantas
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
                 child: TextField(
+                  // Al cambiar el texto, se actualizan los resultados de búsqueda
                   onChanged: (query) {
                     Provider.of<PlantSearchProvider>(
                       context,
@@ -74,6 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
+                        // Al hacer clic en la X, se limpia la búsqueda
                         Provider.of<PlantSearchProvider>(
                           context,
                           listen: false,
@@ -88,16 +91,18 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
-            // Resultados
+            // Lista de resultados de búsqueda en formato grid
             Expanded(
               child: Consumer<PlantSearchProvider>(
                 builder: (context, provider, _) {
+                  // Si no hay resultados, mostrar mensaje
                   if (provider.plants.isEmpty) {
                     return const Center(
                       child: Text('No se encontraron plantas.'),
                     );
                   }
 
+                  // Muestra los resultados en un grid de 2 columnas
                   return GridView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -112,6 +117,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                       return GestureDetector(
                         onTap: () {
+                          // Al tocar una planta, navega a la pantalla de detalles
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -121,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         },
                         child: Card(
-                          color: const Color.fromARGB(255, 251, 255, 247), // Fondo verde del recuadro
+                          color: const Color.fromARGB(255, 251, 255, 247), // Color del fondo de la tarjeta
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -130,6 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Imagen principal de la planta
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
@@ -150,6 +157,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 ),
                               ),
+
+                              // Nombre común y científico
                               Padding(
                                 padding: const EdgeInsets.all(6.0),
                                 child: Column(
