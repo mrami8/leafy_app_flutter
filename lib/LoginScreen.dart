@@ -50,52 +50,21 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _handleLogin(BuildContext context) async {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
-  final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
-
-  await authProvider.logout(); // Limpiar cualquier sesión anterior
-
+  
   String input = _emailOrPhoneController.text.trim();
-  bool success = false;
+  
+  bool success = await authProvider.login(input, _passwordController.text.trim());
 
-  // Determinar si se trata de un correo o un número de teléfono
-  if (_isEmail(input)) {
-    print('Intentando login con correo');
-    // Si es un correo, intentamos login con correo
-    success = await authProvider.login(
-      input,
-      _passwordController.text.trim(),
-    );
-  } else if (_isPhoneNumber(input)) {
-    print('Intentando login con teléfono');
-    // Si es un número de teléfono, intentamos login con teléfono
-    success = await authProvider.loginWithPhone(
-      input,
-      _passwordController.text.trim(),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Por favor, ingresa un correo o un teléfono válido.'),
-      ),
-    );
-    return;
-  }
-
-  // Verificar si el login fue exitoso
   if (success) {
-    userProfileProvider.loadFromAuth(authProvider);
-    print('Login exitoso');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => MainScreen()),
     );
   } else {
-    print('Login fallido');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error al iniciar sesión')),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al iniciar sesión')));
   }
 }
+
 
 
 

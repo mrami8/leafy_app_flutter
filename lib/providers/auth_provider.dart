@@ -36,60 +36,92 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Función de inicio de sesión con email y contraseña
-  // Función de inicio de sesión con correo y contraseña
-Future<bool> login(String email, String password) async {
-  try {
-    final response = await supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
+  Future<bool> login(String input, String password) async {
+    try {
+      // Intentar login como si fuera un correo
+      final emailLogin = await supabase.auth.signInWithPassword(
+        email: input,
+        password: password,
+      );
 
-    // Verificamos si la respuesta contiene una sesión válida
-    if (response.user != null) {
-      _session = response.session;
-      _user = response.user;
-      await _asegurarUsuarioRegistrado();
-      await _loadUserProfile();
-      notifyListeners();
-      print('Login con correo exitoso');
-      return true;
-    } else {
-      print('No se pudo iniciar sesión con el correo. Respuesta vacía.');
-      return false;
+      if (emailLogin.session != null) {
+        print('✅ Login exitoso con correo');
+        _session = emailLogin.session;
+        _user = emailLogin.user;
+        await _asegurarUsuarioRegistrado();
+        await _loadUserProfile();
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      print(
+        '❌ No se pudo iniciar sesión con correo, intentando con teléfono...',
+      );
     }
-  } catch (e) {
-    print('Error durante el inicio de sesión con correo: $e');
+
+    try {
+      // Buscar usuario en la tabla `usuarios` por teléfono y contraseña
+      final userRecord =
+          await supabase
+              .from('usuarios')
+              .select()
+              .eq('telefono', input)
+              .eq('contraseña', password)
+              .maybeSingle();
+
+      if (userRecord != null) {
+        final email = userRecord['email'];
+        print('📧 Encontrado correo asociado al teléfono: $email');
+
+        final fallbackLogin = await supabase.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+
+        if (fallbackLogin.session != null) {
+          print('✅ Login exitoso con correo obtenido por teléfono');
+          _session = fallbackLogin.session;
+          _user = fallbackLogin.user;
+          await _asegurarUsuarioRegistrado();
+          await _loadUserProfile();
+          notifyListeners();
+          return true;
+        }
+      } else {
+        print('⚠️ No se encontró ningún usuario con ese teléfono y contraseña');
+      }
+    } catch (e) {
+      print('❌ Error durante login por teléfono: $e');
+    }
+
     return false;
   }
-}
 
-Future<bool> loginWithPhone(String phone, String password) async {
-  try {
-    // Buscar usuario en la tabla 'usuarios' por teléfono y contraseña
-    final result = await supabase
-        .from('usuarios')
-        .select('email, id')
-        .eq('telefono', phone) // Buscar por teléfono
-        .eq('password', password) // Comparar la contraseña
-        .maybeSingle();
+  Future<bool> loginWithPhone(String phone, String password) async {
+    try {
+      // Buscar usuario en la tabla 'usuarios' por teléfono y contraseña
+      final result =
+          await supabase
+              .from('usuarios')
+              .select('email, id')
+              .eq('telefono', phone) // Buscar por teléfono
+              .eq('password', password) // Comparar la contraseña
+              .maybeSingle();
 
-    if (result != null) {
-      final email = result['email'];
-      print('Usuario encontrado por teléfono: $email');
-      // Intentamos login con el correo del usuario
-      return login(email, password);
-    } else {
-      print('No se encontró un usuario con ese teléfono y contraseña');
+      if (result != null) {
+        final email = result['email'];
+        print('Usuario encontrado por teléfono: $email');
+        // Intentamos login con el correo del usuario
+        return login(email, password);
+      } else {
+        print('No se encontró un usuario con ese teléfono y contraseña');
+        return false;
+      }
+    } catch (e) {
+      print('Error al intentar login con teléfono: $e');
       return false;
     }
-  } catch (e) {
-    print('Error al intentar login con teléfono: $e');
-    return false;
   }
-}
-
-
-
 
   // Función para registrar un nuevo usuario
   Future<bool> register(
@@ -114,6 +146,7 @@ Future<bool> loginWithPhone(String phone, String password) async {
           'nombre': nombre,
           'telefono': telefono, // Insertamos el teléfono
           'foto_perfil': foto,
+          'contraseña': password,
         });
 
         // Guardamos sesión y perfil
