@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart'; // Widget de calendario
-import 'package:leafy_app_flutter/providers/notification_provider.dart'; // Provider para notificaciones
+import 'package:leafy_app_flutter/providers/Calendar/notification_provider.dart'; // Provider para notificaciones
 import 'package:leafy_app_flutter/widget/add_notification_form.dart'; // Formulario para añadir notificación
 
 // Página que muestra el calendario y las notificaciones del día

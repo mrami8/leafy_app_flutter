@@ -1,7 +1,7 @@
 // Importaciones necesarias
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:leafy_app_flutter/providers/notification_provider.dart';
+import 'package:leafy_app_flutter/providers/Calendar/notification_provider.dart';
 
 // Widget sin estado que representa un formulario para añadir notificaciones
 class AddNotificationForm extends StatelessWidget {

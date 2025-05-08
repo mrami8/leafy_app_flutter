@@ -1,7 +1,7 @@
 // Importaciones necesarias
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:leafy_app_flutter/providers/plant_search_provider.dart';
+import 'package:leafy_app_flutter/providers/Search/plant_search_provider.dart';
 import 'plantDetailScreen.dart';
 
 // Pantalla que permite buscar y visualizar plantas desde la base de datos

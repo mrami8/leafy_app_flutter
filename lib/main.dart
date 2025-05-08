@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'supabase_config.dart'; // Configuración personalizada de Supabase
 import 'LoginScreen.dart'; // Pantalla de inicio de sesión
 import 'main_screen.dart'; // Pantalla principal con navegación
-import 'providers/auth_provider.dart';
-import 'providers/plant_search_provider.dart';
-import 'providers/notification_provider.dart';
-import 'providers/user_profile_provider.dart';
-import 'providers/progress_provider.dart';
+import 'providers/General/auth_provider.dart';
+import 'providers/Search/plant_search_provider.dart';
+import 'providers/Calendar/notification_provider.dart';
+import 'providers/Profile/user_profile_provider.dart';
+import 'providers/Garden/progress_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
