@@ -36,33 +36,67 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Función de inicio de sesión con email y contraseña
-  Future<bool> login(String email, String password) async {
-    try {
-      final response = await supabase.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
+  // Función de inicio de sesión con correo y contraseña
+Future<bool> login(String email, String password) async {
+  try {
+    final response = await supabase.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
 
-      // Si hay sesión válida, guardamos los datos y actualizamos el perfil
-      if (response.session != null) {
-        _session = response.session;
-        _user = response.user;
-        await _asegurarUsuarioRegistrado();
-        await _loadUserProfile();
-        notifyListeners();
-        return true;
-      }
-      return false; // Login fallido
-    } on AuthException catch (_) {
-      return false; // Error conocido de autenticación
+    // Verificamos si la respuesta contiene una sesión válida
+    if (response.user != null) {
+      _session = response.session;
+      _user = response.user;
+      await _asegurarUsuarioRegistrado();
+      await _loadUserProfile();
+      notifyListeners();
+      print('Login con correo exitoso');
+      return true;
+    } else {
+      print('No se pudo iniciar sesión con el correo. Respuesta vacía.');
+      return false;
     }
+  } catch (e) {
+    print('Error durante el inicio de sesión con correo: $e');
+    return false;
   }
+}
+
+Future<bool> loginWithPhone(String phone, String password) async {
+  try {
+    // Buscar usuario en la tabla 'usuarios' por teléfono y contraseña
+    final result = await supabase
+        .from('usuarios')
+        .select('email, id')
+        .eq('telefono', phone) // Buscar por teléfono
+        .eq('password', password) // Comparar la contraseña
+        .maybeSingle();
+
+    if (result != null) {
+      final email = result['email'];
+      print('Usuario encontrado por teléfono: $email');
+      // Intentamos login con el correo del usuario
+      return login(email, password);
+    } else {
+      print('No se encontró un usuario con ese teléfono y contraseña');
+      return false;
+    }
+  } catch (e) {
+    print('Error al intentar login con teléfono: $e');
+    return false;
+  }
+}
+
+
+
 
   // Función para registrar un nuevo usuario
   Future<bool> register(
     String email,
     String password,
-    String nombre, {
+    String nombre,
+    String telefono, { // Agregamos el parámetro de teléfono
     String foto = "", // Parámetro opcional para la foto de perfil
   }) async {
     try {
@@ -73,11 +107,12 @@ class AuthProvider extends ChangeNotifier {
 
       // Si el usuario fue creado correctamente
       if (response.user != null) {
-        // Insertamos datos extra en la tabla 'usuarios'
+        // Insertamos datos extra en la tabla 'usuarios' (incluyendo teléfono)
         await supabase.from('usuarios').insert({
           'id': response.user!.id,
           'email': email,
           'nombre': nombre,
+          'telefono': telefono, // Insertamos el teléfono
           'foto_perfil': foto,
         });
 
@@ -151,6 +186,8 @@ class AuthProvider extends ChangeNotifier {
           'email': _user!.email,
           'nombre': 'Usuario nuevo',
           'foto_perfil': '',
+          'telefono':
+              '', // Aseguramos que el teléfono también se registre vacío si no existe
         });
         print('✅ Usuario creado automáticamente en tabla usuarios');
       } else {
