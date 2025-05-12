@@ -1,87 +1,83 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
-class MapaFlowershop extends StatefulWidget {
-  const MapaFlowershop({super.key});
+class FlowerShopsScreen extends StatefulWidget {
+  const FlowerShopsScreen({super.key});
 
   @override
-  State<MapaFlowershop> createState() => _MapaFlowershopState();
+  _FlowerShopsScreenState createState() => _FlowerShopsScreenState();
 }
 
-class _MapaFlowershopState extends State<MapaFlowershop> {
-  late GoogleMapController mapController;
-  LatLng? _currentPosition;
+class _FlowerShopsScreenState extends State<FlowerShopsScreen> {
+  late GoogleMapController _mapController;
   Set<Marker> _markers = {};
+  final String _apiKey = 'AIzaSyCb9Y_E11TwvEBJxjRga-q3EYYaBsvqmnw';  // Tu API key de Google Places
 
-  final String _googleApiKey = 'AIzaSyCb9Y_E11TwvEBJxjRga-q3EYYaBsvqmnw';
+  // Coordenadas de Madrid (puedes cambiar esto para buscar en otras ciudades)
+  final LatLng _center = LatLng(40.416775, -3.703790);  // Coordenadas de Madrid
 
   @override
   void initState() {
     super.initState();
-    _obtenerUbicacion();
+    _getFlowerShops();
   }
 
-  Future<void> _obtenerUbicacion() async {
-    final permiso = await Geolocator.requestPermission();
-    if (permiso == LocationPermission.deniedForever || permiso == LocationPermission.denied) return;
+  // Llamada a la API de Places para obtener floristerías
+  Future<void> _getFlowerShops() async {
+    final String url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${_center.latitude},${_center.longitude}&radius=5000&type=florist&key=$_apiKey';
 
-    final posicion = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = LatLng(posicion.latitude, posicion.longitude);
-    });
+    final response = await http.get(Uri.parse(url));
 
-    _buscarFloristerias();
-  }
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final results = data['results'];
 
-  Future<void> _buscarFloristerias() async {
-    if (_currentPosition == null) return;
+      // Crear un marcador para cada floristería
+      Set<Marker> markers = {};
+      for (var result in results) {
+        double lat = result['geometry']['location']['lat'];
+        double lng = result['geometry']['location']['lng'];
+        String name = result['name'];
+        String address = result['vicinity'] ?? 'Sin dirección';
 
-    final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
-      '?location=${_currentPosition!.latitude},${_currentPosition!.longitude}'
-      '&radius=3000&type=florist&key=$_googleApiKey',
-    );
-
-    final response = await http.get(url);
-    final data = json.decode(response.body);
-
-    if (data['status'] == 'OK') {
-      final results = data['results'] as List;
+        markers.add(Marker(
+          markerId: MarkerId(name),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(
+            title: name,
+            snippet: address,
+          ),
+        ));
+      }
 
       setState(() {
-        _markers = results.map((place) {
-          final lat = place['geometry']['location']['lat'];
-          final lng = place['geometry']['location']['lng'];
-          final name = place['name'];
-
-          return Marker(
-            markerId: MarkerId(place['place_id']),
-            position: LatLng(lat, lng),
-            infoWindow: InfoWindow(title: name),
-          );
-        }).toSet();
+        _markers = markers;
       });
+    } else {
+      throw Exception('Failed to load flower shops');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentPosition == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: _currentPosition!,
-        zoom: 14,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Floristerías en España'),
+        backgroundColor: const Color(0xFFD7EAC8),
       ),
-      markers: _markers,
-      onMapCreated: (controller) => mapController = controller,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 12,
+        ),
+        onMapCreated: (GoogleMapController controller) {
+          _mapController = controller;
+        },
+        markers: _markers,  // Añadir los marcadores de las floristerías
+      ),
     );
   }
 }
