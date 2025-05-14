@@ -9,11 +9,14 @@ import 'providers/Calendar/notification_provider.dart';
 import 'providers/Profile/user_profile_provider.dart';
 import 'providers/Garden/progress_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'notificaciones/notificaciones.dart'; // Inicialización de notificaciones
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Asegura que Flutter está completamente inicializado
 
   await SupabaseConfig.init(); // Inicializa Supabase con la configuración personalizada
+  
+  await configurarNotificacionesDiarias(); // Inicializa las notificaciones
 
   final supabaseClient = Supabase.instance.client; // Cliente global de Supabase
 
