@@ -77,28 +77,30 @@ class _CalendarPageState extends State<CalendarPage> {
               focusedDay: _focusedDay,
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
-                // Cuando se selecciona un día en el calendario
                 setState(() {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                // Cargamos las notificaciones del día seleccionado
                 Provider.of<NotificationProvider>(
                   context,
                   listen: false,
                 ).getNotificationsForDate(selectedDay);
               },
+              calendarFormat: CalendarFormat.month, // Forzar formato mensual
+              onFormatChanged: (_) {}, // No hacer nada si intentan cambiarlo
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false, // Ya no aparece el botón
+              ),
               calendarStyle: const CalendarStyle(
                 selectedDecoration: BoxDecoration(
-                  color: Colors.green, // Día seleccionado
+                  color: Colors.green,
                   shape: BoxShape.circle,
                 ),
                 todayDecoration: BoxDecoration(
-                  color: Colors.lightGreen, // Día actual
+                  color: Colors.lightGreen,
                   shape: BoxShape.circle,
                 ),
               ),
-              calendarFormat: CalendarFormat.month, // Vista mensual
             ),
 
             const SizedBox(height: 16),
