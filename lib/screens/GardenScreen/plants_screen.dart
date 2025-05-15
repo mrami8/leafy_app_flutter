@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:leafy_app_flutter/screens/GardenScreen/planta_crecimiento_screen.dart';
 
-// Pantalla que muestra las plantas añadidas por el usuario en su jardín
+/// Pantalla que muestra todas las plantas del jardín del usuario
 class PlantsScreen extends StatefulWidget {
   const PlantsScreen({super.key});
 
@@ -11,15 +11,16 @@ class PlantsScreen extends StatefulWidget {
 }
 
 class _PlantsScreenState extends State<PlantsScreen> {
-  List<Map<String, dynamic>> plantas = [];
-  bool isLoading = true;
+  List<Map<String, dynamic>> plantas = []; // Lista de plantas del jardín
+  bool isLoading = true; // Controla el estado de carga inicial
 
   @override
   void initState() {
     super.initState();
-    cargarPlantas();
+    cargarPlantas(); // Carga las plantas al iniciar la pantalla
   }
 
+  /// Obtiene las plantas del usuario desde la tabla 'jardin' en Supabase
   Future<void> cargarPlantas() async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
@@ -31,10 +32,11 @@ class _PlantsScreenState extends State<PlantsScreen> {
 
     setState(() {
       plantas = (result as List).cast<Map<String, dynamic>>();
-      isLoading = false;
+      isLoading = false; // Oculta el loader cuando termina
     });
   }
 
+  /// Muestra un formulario emergente para añadir una nueva planta personalizada
   void mostrarFormularioNuevaPlanta() {
     final controller = TextEditingController();
 
@@ -44,9 +46,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
         title: const Text('Añadir nueva planta'),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nombre personalizado',
-          ),
+          decoration: const InputDecoration(labelText: 'Nombre personalizado'),
         ),
         actions: [
           TextButton(
@@ -68,11 +68,12 @@ class _PlantsScreenState extends State<PlantsScreen> {
     );
   }
 
+  /// Inserta una planta dummy en el jardín con nombre personalizado
   Future<void> anadirPlantaDummy(String nombrePersonalizado) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
 
-    const dummyPlantaId = 'fdd93415-6e05-412d-b32c-cd778d990896';
+    const dummyPlantaId = 'fdd93415-6e05-412d-b32c-cd778d990896'; // ID fijo
 
     await Supabase.instance.client.from('jardin').insert({
       'id_usuario': user.id,
@@ -81,12 +82,13 @@ class _PlantsScreenState extends State<PlantsScreen> {
       'fecha_adquisicion': DateTime.now().toIso8601String(),
     });
 
-    await cargarPlantas();
+    await cargarPlantas(); // Recarga lista con la nueva planta
   }
 
+  /// Elimina una planta del jardín según su ID
   Future<void> eliminarJardin(String jardinId) async {
     await Supabase.instance.client.from('jardin').delete().eq('id', jardinId);
-    await cargarPlantas();
+    await cargarPlantas(); // Refresca la lista después de eliminar
   }
 
   @override
@@ -95,7 +97,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
       backgroundColor: const Color(0xFFEAF4E4),
       floatingActionButton: FloatingActionButton(
         onPressed: mostrarFormularioNuevaPlanta,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add), // Botón de añadir planta
       ),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -125,9 +127,11 @@ class _PlantsScreenState extends State<PlantsScreen> {
           const SizedBox(height: 12),
           Expanded(
             child: isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator()) // Spinner
                 : plantas.isEmpty
-                    ? const Center(child: Text('Aún no tienes plantas en tu jardín 🌿'))
+                    ? const Center(
+                        child: Text('Aún no tienes plantas en tu jardín 🌿'),
+                      )
                     : GridView.builder(
                         padding: const EdgeInsets.all(12),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -143,13 +147,14 @@ class _PlantsScreenState extends State<PlantsScreen> {
 
                           return Stack(
                             children: [
+                              // Cuadro de planta
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => PlantGrowthPage(
-                                        jardinId: jardinItem['id'],
+                                        jardinId: jardinItem['id'], // Muestra progreso
                                       ),
                                     ),
                                   );
@@ -178,6 +183,8 @@ class _PlantsScreenState extends State<PlantsScreen> {
                                   ],
                                 ),
                               ),
+
+                              // Botón de eliminar
                               Positioned(
                                 top: 6,
                                 right: 6,
@@ -187,27 +194,20 @@ class _PlantsScreenState extends State<PlantsScreen> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
+                                    icon: const Icon(Icons.delete, color: Colors.white, size: 20),
                                     onPressed: () async {
                                       final confirm = await showDialog<bool>(
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           title: const Text('¿Eliminar planta?'),
-                                          content: const Text(
-                                              'Esta acción no se puede deshacer.'),
+                                          content: const Text('Esta acción no se puede deshacer.'),
                                           actions: [
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, false),
+                                              onPressed: () => Navigator.pop(context, false),
                                               child: const Text('Cancelar'),
                                             ),
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, true),
+                                              onPressed: () => Navigator.pop(context, true),
                                               child: const Text('Eliminar'),
                                             ),
                                           ],

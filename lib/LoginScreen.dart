@@ -1,9 +1,9 @@
+// Importaciones necesarias
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'main_screen.dart';
-import 'providers/General/auth_provider.dart';
-import 'providers/Profile/user_profile_provider.dart';
-
+import 'main_screen.dart'; // Pantalla principal después del login
+import 'providers/General/auth_provider.dart'; // Lógica de autenticación
+// Pantalla de Login/Registro
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -13,16 +13,16 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
-  final _emailOrPhoneController =
-      TextEditingController(); // Un solo controlador para email o teléfono
-  final _passwordController = TextEditingController();
-  final _nombreController = TextEditingController();
-  final _telefonoController = TextEditingController(); // ✅ Nuevo controlador
+  // Controladores de texto para campos de entrada
+  final _emailOrPhoneController = TextEditingController(); // Correo o teléfono
+  final _passwordController = TextEditingController(); // Contraseña
+  final _nombreController = TextEditingController(); // Nombre (solo para registro)
+  final _telefonoController = TextEditingController(); // Teléfono (solo para registro)
 
-  bool isRegistering = false;
+  bool isRegistering = false; // Indica si el usuario está registrándose o iniciando sesión
 
-  late AnimationController _controller;
-  late Animation<Offset> _offsetAnimation;
+  late AnimationController _controller; // Controlador para animaciones
+  late Animation<Offset> _offsetAnimation; // Animación de desplazamiento vertical
 
   @override
   void initState() {
@@ -32,54 +32,60 @@ class _LoginScreenState extends State<LoginScreen>
       vsync: this,
     );
     _offsetAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.3),
-      end: Offset.zero,
+      begin: const Offset(0.0, 0.3), // Inicia ligeramente abajo
+      end: Offset.zero, // Termina en su lugar original
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    _controller.forward();
+
+    _controller.forward(); // Iniciar animación al cargar
   }
 
   @override
   void dispose() {
+    // Liberar recursos de los controladores y animaciones
     _controller.dispose();
     _emailOrPhoneController.dispose();
     _passwordController.dispose();
     _nombreController.dispose();
-    _telefonoController.dispose(); // ✅ Liberar también este controlador
+    _telefonoController.dispose();
     super.dispose();
   }
 
+  // Maneja el inicio de sesión
   Future<void> _handleLogin(BuildContext context) async {
-  final authProvider = Provider.of<AuthProvider>(context, listen: false);
-  
-  String input = _emailOrPhoneController.text.trim();
-  
-  bool success = await authProvider.login(input, _passwordController.text.trim());
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    String input = _emailOrPhoneController.text.trim();
 
-  if (success) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => MainScreen()),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al iniciar sesión')));
+    // Llamar a la función login del AuthProvider
+    bool success = await authProvider.login(input, _passwordController.text.trim());
+
+    if (success) {
+      // Navegar a la pantalla principal si el login fue exitoso
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => MainScreen()),
+      );
+    } else {
+      // Mostrar error en un SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al iniciar sesión')),
+      );
+    }
   }
-}
 
-
-
-
-
+  // Maneja el registro de usuarios nuevos
   Future<void> _handleRegister(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    // Llamar a la función register del AuthProvider
     bool success = await authProvider.register(
       _emailOrPhoneController.text.trim(),
       _passwordController.text.trim(),
       _nombreController.text.trim(),
-      _telefonoController.text.trim(), // ✅ Pasar teléfono
+      _telefonoController.text.trim(),
     );
 
     if (success) {
+      // Mostrar mensaje de éxito y cambiar a modo login
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registro exitoso, ahora inicia sesión.')),
       );
@@ -87,22 +93,11 @@ class _LoginScreenState extends State<LoginScreen>
         isRegistering = false;
       });
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Error al registrarse')));
+      // Mostrar error en un SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al registrarse')),
+      );
     }
-  }
-
-  bool _isEmail(String input) {
-    // Verificar si es un correo
-    return RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
-    ).hasMatch(input);
-  }
-
-  bool _isPhoneNumber(String input) {
-    // Verificar si es un teléfono (por ejemplo, números con 10 dígitos)
-    return RegExp(r'^\+?[0-9]{10,15}$').hasMatch(input);
   }
 
   @override
@@ -111,13 +106,17 @@ class _LoginScreenState extends State<LoginScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
+          // Imagen de fondo
           Image.asset('assets/FondoPantalla.jpg', fit: BoxFit.cover),
+
+          // Capa oscura encima del fondo para mejorar contraste
           Container(color: Colors.black.withOpacity(0.6)),
+
+          // Contenido principal centrado con animación
           Center(
             child: SlideTransition(
               position: _offsetAnimation,
               child: SingleChildScrollView(
-                // Aquí envolvemos todo en un SingleChildScrollView
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 400),
                   padding: const EdgeInsets.all(24),
@@ -136,12 +135,13 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Logo principal
                       Image.asset('assets/LogoLeafy.png', height: 100),
                       const SizedBox(height: 16),
+
+                      // Título según modo actual
                       Text(
-                        isRegistering
-                            ? "Crea tu cuenta"
-                            : "Bienvenido de nuevo",
+                        isRegistering ? "Crea tu cuenta" : "Bienvenido de nuevo",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -150,26 +150,22 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       const SizedBox(height: 20),
 
+                      // Campos de registro adicionales
                       if (isRegistering)
                         _buildTextField("Nombre", _nombreController),
-                      if (isRegistering)
-                        _buildTextField(
-                          "Teléfono",
-                          _telefonoController,
-                        ), // ✅ Nuevo campo
 
-                      _buildTextField(
-                        "Correo o Teléfono",
-                        _emailOrPhoneController,
-                      ),
-                      _buildTextField(
-                        "Contraseña",
-                        _passwordController,
-                        isPassword: true,
-                      ),
+                      if (isRegistering)
+                        _buildTextField("Teléfono", _telefonoController),
+
+                      // Campo compartido (email o teléfono)
+                      _buildTextField("Correo o Teléfono", _emailOrPhoneController),
+
+                      // Campo de contraseña
+                      _buildTextField("Contraseña", _passwordController, isPassword: true),
 
                       const SizedBox(height: 20),
 
+                      // Botón de acción (login o registro)
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -197,6 +193,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
 
+                      // Botón para cambiar entre login y registro
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -221,6 +218,7 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  // Método auxiliar para crear campos de texto con estilo
   Widget _buildTextField(
     String label,
     TextEditingController controller, {
@@ -230,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen>
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: controller,
-        obscureText: isPassword,
+        obscureText: isPassword, // Oculta texto si es contraseña
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
